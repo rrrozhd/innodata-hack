@@ -168,7 +168,7 @@ def answer(state: dict, program: str, parsed: dict, data: dict):
         n_th = {"second": 2, "third": 3, "fourth": 4, "fifth": 5, "sixth": 6}[parsed["ordinal"]]
         return sorted(ev)[n_th - 1][1]
     if program == "tg_longest":
-        best = (0, None)
+        best = (0, "")
         for n, y in track.items():
             run = 0
             for i in range(1, len(ts)):
