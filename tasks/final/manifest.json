@@ -1,0 +1,65 @@
+{
+ "generator_version": "0.1.0",
+ "tasks": [
+  {
+   "level": 5,
+   "program": "tg_overtakes",
+   "seed": 5001,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_overtakes",
+   "seed": 5002,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_meets",
+   "seed": 5001,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_meets",
+   "seed": 5002,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_section",
+   "seed": 5001,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_section",
+   "seed": 5002,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_nth",
+   "seed": 5001,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_nth",
+   "seed": 5002,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_longest",
+   "seed": 5001,
+   "variant": ""
+  },
+  {
+   "level": 5,
+   "program": "tg_longest",
+   "seed": 5002,
+   "variant": ""
+  }
+ ]
+}

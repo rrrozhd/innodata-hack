@@ -1,0 +1,28 @@
+{
+ "models": [
+  "anthropic/claude-haiku-5.5",
+  "openai/gpt-6-luna"
+ ],
+ "temperature": 0,
+ "max_tokens": 64000,
+ "reasoning": {
+  "effort": "high"
+ },
+ "prompt_template": "{question}",
+ "prompt_system": null,
+ "prompt_note": "The task's question field is the complete text sent; the image is attached as a base64 PNG data URL.",
+ "base_url": "https://openrouter.ai/api/v1",
+ "with_image": true,
+ "generator_version": "0.1.0",
+ "tasks_folder": "tasks/final",
+ "n_tasks": 10,
+ "results_file": "responses.csv",
+ "started_at": "2026-11-14T20:39:05+00:00",
+ "finished_at": "2026-11-14T20:46:29+00:00",
+ "complete": true,
+ "incomplete_rows": [],
+ "placeholder": false,
+ "placeholder_note": "",
+ "sampling_note": "temperature 0 is sent as the brief requires. OpenRouter's model list does not include temperature among the supported parameters of either evaluated model, so sending it is not evidence that it was applied.",
+ "total_cost_usd": 0.12
+}

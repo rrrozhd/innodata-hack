@@ -1,0 +1,143 @@
+model,task_id,status,parsed,question_type,response,ref_answer,correct,finish_reason,error,fingerprint,fingerprint_kind,family,level,variant,latency_s,prompt_tokens,completion_tokens,cost_usd
+anthropic/claude-haiku-5.5,tg-tg_overtakes-L5-s5001,ok,"1203, 3703",tg_overtakes,"Train 6101 is a freight train running up from Aldermoor, and it makes three visible stops: Penhallow (about 13:37 to 13:40), Dunmore (about 13:52 to 13:55) and Fairwater (about 14:04 to 14:10). Reading the chart by eye, only two same-direction trains pass it while it is standing:
+
+1. **Train 1203** (IC express, leaving Aldermoor about 13:33) passes Penhallow at roughly 13:39, while 6101 is standing there.
+2. **Train 3703** (RE regional, leaving Aldermoor about 13:43) passes Dunmore at roughly 13:53, while 6101 is standing there.
+
+Other candidates don't qualify. Train 3701 passes Penhallow before 6101 arrives. Train 1205 and the later passenger trains pass the Fairwater area after 6101 has left. The freight trains run at the same speed as 6101, so they don't overtake it. I could not read the chart confidently for any stops after Fairwater, so later overtakes are possible but not identified here.
+
+FINAL ANSWER: 1203, 3703","[""1203"", ""3703"", ""1205"", ""1207"", ""3705""]",0,stop,,unmatched,,traingraph,5,,61.98,2443,13207,0.006848
+anthropic/claude-haiku-5.5,tg-tg_overtakes-L5-s5002,ok,"1209, 3709",tg_overtakes,"I could not read every station stop in the chart with certainty, so this answer is partial.
+
+Train 6105 leaves Port Halden at about 08:53 and runs towards Northgate. Its clearest standing stretch is at Ashby Halt, from roughly 08:59 to 09:05. While it stands there, the IC express 1209, which leaves Port Halden just before 6105 and runs faster, passes Ashby Halt, so 1209 overtakes 6105 first.
+
+Later, the RE regional 3709 (leaving Port Halden just after 6105) should also overtake it if 6105 stands at a station further up the line (around Linton Moor or Wyeford). I could not confirm that stop from the chart, so 3709 is a likely but unverified second overtaker.
+
+FINAL ANSWER: 1209, 3709","[""1209"", ""3709"", ""1211""]",0,stop,,slip:missed_last,single_slip,traingraph,5,,42.52,2431,8518,0.004502
+anthropic/claude-haiku-5.5,tg-tg_meets-L5-s5001,ok,9,tg_meets,"I estimated this from the chart's geometry rather than tracing every line exactly, so the count is approximate.
+
+Train 6103 is a freight that starts at Eastmere at about 15:00 and climbs towards Marlow Central. The opposing trains are those running downward from Marlow Central. A downward train crosses 6103 if it reaches Eastmere-level to the right of 6103's start point, which means it arrives after about 15:00, and if it starts far enough left to be on the line while 6103 is still running. Working through the downward IC, regional and freight trains on that basis, the likely crossings are 1204, 3704, 6102, 1206, 3706, 6104, 6106, 1208, 3708, 6108 and 1210, with 3710 and 1212 as possible extras. Each is a judgement from approximate line positions, and the exact endpoint of 6103 is uncertain, so I've settled on a best estimate of 9.
+
+FINAL ANSWER: 9",19,0,stop,,unmatched,,traingraph,5,,54.28,2433,10796,0.005641
+anthropic/claude-haiku-5.5,tg-tg_meets-L5-s5002,ok,14,tg_meets,"Train 6103 is a freight that starts at Eastmere around 14:00 and runs up towards Marlow Central, so the trains running in the opposite direction are the down-sloping trains from Marlow.
+
+I traced 6103's line approximately, since the freight stops and slopes are hard to read exactly. It leaves Eastmere at about x≈495, stands at Wexford Rd, Brixley, Kesmere and Calder, and reaches Marlow Central at about x≈1020.
+
+Because 6103 moves monotonically upward, a down-train crosses it exactly when it starts at Marlow to the left of 6103's top point (x<~1020) and reaches Eastmere to the right of its bottom point (x>~495).
+
+Down-trains meeting this condition:
+1. 6102 (starts ~375)
+2. 1204 (~358)
+3. 3702 (~258)
+4. 3704 (~418)
+5. 6104 (~470)
+6. 1206 (~528)
+7. 3706 (~578)
+8. 6106 (~642)
+9. 1208 (~694)
+10. 3708 (~744)
+11. 6108 (~806)
+12. 1210 (~866)
+13. 3710 (~910)
+14. 6110 (~972)
+
+Excluded: 1202 ends at Eastmere to the left of 6103's start, and 1212 starts to the right of 6103's arrival point at Marlow. The count is sensitive to the exact top point of 6103, so 1212 is the most uncertain exclusion.
+
+FINAL ANSWER: 14",17,0,stop,,unmatched,,traingraph,5,,52.9,2433,10371,0.005429
+anthropic/claude-haiku-5.5,tg-tg_section-L5-s5001,ok,"1206, 3705, 6105",tg_section,"I could not read this chart precisely enough to be confident. The answer below is an estimate from approximate slopes, and the crossings of 1206, 3705 and 6105 are especially uncertain.
+
+At 14:40 (x ≈ 728), the trains I estimate to be between Elmfield Jn and Ashby Halt are:
+- **1206** (down-running IC, from Northgate), estimated between Carrow and Wyeford.
+- **3705** (up-running RE, from Port Halden), estimated near Carrow/Wyeford.
+- **6105** (up-running freight, from Port Halden), estimated between Wyeford and Linton Moor.
+
+FINAL ANSWER: 1206, 3705, 6105","[""1206"", ""3704"", ""3705"", ""6101"", ""6102"", ""6103""]",0,stop,,unmatched,,traingraph,5,,46.54,2468,8823,0.004658
+anthropic/claude-haiku-5.5,tg-tg_section-L5-s5002,ok,"3707, 3708",tg_section,"**Approach:** I read the chart at 08:10, which sits at about x ≈ 893 on the time axis. The section between Calder and Thornholt covers the lines between those two station rows, so it includes Oakstow, Kesmere and Brixley. I estimated each train's position at x ≈ 893 from its slope and start point. The chart is dense and these readings are approximate.
+
+**Trains in the section at 08:10:**
+- **3708** (blue, Marlow → Eastmere) descends through the Calder–Oakstow stretch at about 08:10.
+- **3707** (blue, Eastmere → Marlow) climbs through the Brixley–Kesmere stretch at about 08:10.
+
+**Trains ruled out:**
+- **6107** (freight, Eastmere → Marlow) is standing at Wexford Rd at 08:10, so it is outside the section.
+- **1209** (IC, Eastmere → Marlow) is around Wexford Rd at that time.
+- **1210** and **6108** are above Calder at that time.
+- **3705** and **1207** are above Calder.
+- **6105** is uncertain near Wexford Rd and Thornholt, so I left it out.
+
+FINAL ANSWER: 3707, 3708","[""1208"", ""3706"", ""3707"", ""3708"", ""6103"", ""6104"", ""6105""]",0,stop,,unmatched,,traingraph,5,,46.99,2460,9284,0.004888
+anthropic/claude-haiku-5.5,tg-tg_nth-L5-s5001,ok,1210,tg_nth,"## Reading the chart
+
+Penhallow is the station line second from the bottom. I converted the chart's horizontal scale to time (15:00 at x≈176, 19:00 at x≈1500, about 5.5 px per minute) and estimated when each train first reaches the Penhallow line. The estimates use each train's sloped segments and stops, so they are approximate, especially where trains stop at intermediate stations.
+
+## Arrivals at Penhallow after 16:50 (approximate)
+
+| Approx. time | Train | Direction |
+|---|---|---|
+| ~17:01 | 3707 (RE regional) | Up from Aldermoor |
+| ~17:09 | 6104 (freight) | Down, stops at Penhallow |
+| ~17:12 | 1209 (IC express) | Up from Aldermoor |
+| ~17:16 | 3706 (RE regional) | Down from Kingsbridge |
+| ~17:20 | 1210 (IC express) | Down from Kingsbridge |
+| ~17:24 | 6107 (freight) | Up from Aldermoor |
+| ~17:30 | 3709 (RE regional) | Up from Aldermoor |
+
+Trains near the 16:50 boundary, such as 1208 (about 16:49–16:50), 3704 (about 16:47) and 6102 (about 16:48), appear to arrive just before the cut-off, so I excluded them.
+
+## Result
+
+Counting in order after 16:50: 3707, 6104, 1209, 3706, 1210. The fifth is train 1210.
+
+The timing of 6104 and 1210 is the least certain part of this reading, since both are close together and the stop positions are hard to read exactly.
+
+FINAL ANSWER: 1210",1208,0,stop,,unmatched,,traingraph,5,,94.62,2453,21055,0.010773
+anthropic/claude-haiku-5.5,tg-tg_nth-L5-s5002,ok,3709,tg_nth,"**Answer: train 3709**, the fifth arrival at Stonebridge after 15:40 by my reading of the chart.
+
+This is an estimate, not an exact reading. Pixel positions in the image are approximate, and the stopping times are inferred from the line slopes.
+
+**Approach.** Stonebridge is at y≈302. At this chart's scale (about 5.5 px per minute), I estimated each train's arrival from its start point and slope:
+- Down trains from Northgate reach Stonebridge roughly 11 minutes after leaving.
+- Up trains from Port Halden reach Stonebridge roughly 40 minutes after leaving.
+
+**Estimated arrivals after 15:40:**
+
+| Order | Train | Direction | Approx. arrival |
+|---|---|---|---|
+| 1 | 6107 | Up (from Port Halden, departs 15:00) | ~15:45–15:55 |
+| 2 | 1212 | Down (from Northgate) | ~15:45 |
+| 3 | 1209 | Up | ~15:51 |
+| 4 | 3712 | Down | ~15:54 |
+| 5 | 3709 | Up | ~16:01 |
+| 6 | 6112 | Down | ~16:05 |
+
+The 6107 timing is the least certain, but 3709 is fifth unless 6107 arrives after 16:01. If it does, 6107 takes fifth place instead, so 3709 is the most robust choice rather than a certain one.
+
+FINAL ANSWER: 3709",3707,0,stop,,up_trains_only,strategy,traingraph,5,,75.77,2442,16404,0.008446
+anthropic/claude-haiku-5.5,tg-tg_longest-L5-s5001,ok,6112,tg_longest,"The longest stop I can find is the freight train **6112** at Milbury, at roughly 17:20 to 17:34, about 14 minutes. I read this from the pixel positions, so the exact duration is approximate. Other stops I checked, such as 6102 at Tolworth (about 9 minutes) and 6104 at Sandham Jn (about 9 minutes), are shorter.
+
+FINAL ANSWER: 6112",6109,0,stop,,unmatched,,traingraph,5,,18.45,2419,3389,0.001936
+anthropic/claude-haiku-5.5,tg-tg_longest-L5-s5002,ok,6102,tg_longest,"The longest stop is train **6102** at **Rushton**. Its green line sits horizontally at Rushton from about 14:03 to 14:20, roughly 17 minutes.
+
+I estimated this from the chart by comparing horizontal stretches. The next longest I found were about 14–15 minutes (freight 6103 at Carrow and the green train at Elmfield Jn), so the Rushton stop is the longest, though my pixel estimates are approximate.
+
+FINAL ANSWER: 6102",6111,0,stop,,unmatched,,traingraph,5,,15.39,2407,3059,0.00177
+openai/gpt-6-luna,tg-tg_overtakes-L5-s5001,ok,"1203, 3703, 1205, 3705, 1207",tg_overtakes,"FINAL ANSWER: 1203, 3703, 1205, 3705, 1207","[""1203"", ""3703"", ""1205"", ""1207"", ""3705""]",0,stop,,ordered_by_departure,strategy,traingraph,5,,141.27,2126,20229,0.010136
+openai/gpt-6-luna,tg-tg_overtakes-L5-s5002,ok,"1209, 3709",tg_overtakes,"FINAL ANSWER: 1209, 3709","[""1209"", ""3709"", ""1211""]",0,stop,,slip:missed_last,single_slip,traingraph,5,,80.9,2126,9798,0.004921
+openai/gpt-6-luna,tg-tg_meets-L5-s5001,ok,12,tg_meets,"Train 6103 meets 12 trains running in the opposite direction.
+
+FINAL ANSWER: 12",19,0,stop,,unmatched,,traingraph,5,,137.54,2124,15726,0.007885
+openai/gpt-6-luna,tg-tg_meets-L5-s5002,ok,7,tg_meets,"Train 6103 meets seven trains running in the opposite direction.
+
+FINAL ANSWER: 7",17,0,stop,,unmatched,,traingraph,5,,151.23,2124,15561,0.007802
+openai/gpt-6-luna,tg-tg_section-L5-s5001,ok,"1206, 3704, 3705, 6103, 6105",tg_section,"FINAL ANSWER: 1206, 3704, 3705, 6103, 6105","[""1206"", ""3704"", ""3705"", ""6101"", ""6102"", ""6103""]",0,stop,,unmatched,,traingraph,5,,172.43,2148,20580,0.010312
+openai/gpt-6-luna,tg-tg_section-L5-s5002,ok,"3707, 3708, 6105, 6106",tg_section,"FINAL ANSWER: 3707, 3708, 6105, 6106","[""1208"", ""3706"", ""3707"", ""3708"", ""6103"", ""6104"", ""6105""]",0,stop,,unmatched,,traingraph,5,,77.84,2140,11058,0.005551
+openai/gpt-6-luna,tg-tg_nth-L5-s5001,ok,6107,tg_nth,"The fifth train to arrive at Penhallow after 16:50 is **6107**.
+
+FINAL ANSWER: 6107",1208,0,stop,,ordered_by_departure,strategy,traingraph,5,,117.49,2130,12699,0.006371
+openai/gpt-6-luna,tg-tg_nth-L5-s5002,ok,3709,tg_nth,"Counting arrivals at Stonebridge after 15:40 in both directions, the fifth train is 3709.
+
+FINAL ANSWER: 3709",3707,0,stop,,up_trains_only,strategy,traingraph,5,,144.05,2130,15163,0.007603
+openai/gpt-6-luna,tg-tg_longest-L5-s5001,ok,6103,tg_longest,"The longest single stop is made by train 6103.
+
+FINAL ANSWER: 6103",6109,0,stop,,unmatched,,traingraph,5,,48.04,2106,5080,0.002561
+openai/gpt-6-luna,tg-tg_longest-L5-s5002,ok,6102,tg_longest,FINAL ANSWER: 6102,6111,0,stop,,unmatched,,traingraph,5,,38.57,2106,3905,0.001974

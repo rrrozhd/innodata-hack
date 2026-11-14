@@ -1,0 +1,89 @@
+{
+ "task_id": "tg-tg_section-L5-s5002",
+ "validator_version": "0.2.0",
+ "passed": true,
+ "skipped": [
+  "ocr_labels"
+ ],
+ "checks": [
+  {
+   "name": "schema",
+   "status": "pass",
+   "detail": "task record has the required fields in the required form",
+   "limit": "Format only."
+  },
+  {
+   "name": "hashes",
+   "status": "pass",
+   "detail": "file and pixel hashes match the task record",
+   "limit": "Detects a changed file, not a wrong one."
+  },
+  {
+   "name": "question_matches_data",
+   "status": "pass",
+   "detail": "the question is exactly what the generator words for this scene",
+   "limit": "Shows the stored question is the one the generator words for this scene."
+  },
+  {
+   "name": "rerender",
+   "status": "pass",
+   "detail": "re-rendering the stored scene reproduces the PNG pixel for pixel",
+   "limit": "Same renderer, same machine: shows the PNG is a pure function of the data, not that the renderer draws correctly."
+  },
+  {
+   "name": "read_image",
+   "status": "pass",
+   "detail": "train-coloured pixels found in the plot: IC 41264, RE 35165, FR 37463",
+   "limit": "Finds the train colours in the PNG; uses the plot rectangle, station heights, time span and colours recorded by the renderer as calibration."
+  },
+  {
+   "name": "timetable_matches_data",
+   "status": "pass",
+   "detail": "all 46 trains drawn along their whole path (lowest own-colour share 91%, train 6102), each numbered at its start, and no stray train pixels",
+   "limit": "Every train path from the data is traced in the PNG in its colour, its number sits at its start, and no train pixel is unexplained; does not rebuild the timetable from pixels alone."
+  },
+  {
+   "name": "independent_answer",
+   "status": "pass",
+   "detail": "solving from the PNG gives ['1208', '3706', '3707', '3708', '6103', '6104', '6105']; the reference is ['1208', '3706', '3707', '3708', '6103', '6104', '6105']",
+   "limit": "Second solver (time sampling, not crossing algebra) driven by the question text; works from the stored data, which the pixel check ties to the image."
+  },
+  {
+   "name": "answer_not_in_question",
+   "status": "pass",
+   "detail": "the answer does not appear in the question text",
+   "limit": "String match only."
+  },
+  {
+   "name": "fingerprints",
+   "status": "pass",
+   "detail": "7 armed and 0 disarmed fingerprints, strategies pairwise distinct",
+   "limit": "Checks the stored table is self-consistent, not that the list of shortcuts is complete."
+  },
+  {
+   "name": "labels_legible",
+   "status": "pass",
+   "detail": "78 labels: capital height at least 7.0 px at 0.667x, contrast measured in the PNG, none overlapping",
+   "limit": "Assumes a worst-case downscale of 0.667x; real provider resize policies are unknown."
+  },
+  {
+   "name": "ocr_labels",
+   "status": "skipped",
+   "detail": "Tesseract not installed on this machine; OCR runs in the Docker image",
+   "limit": "Runs only where Tesseract is installed (the Docker image); samples labels on dense drawings."
+  },
+  {
+   "name": "image_dependence",
+   "status": "pass",
+   "detail": "same question text, different image, different answer (['3706', '3707', '3708', '6103', '6104', '6105'])",
+   "limit": "Shows the question text alone does not determine the answer; guessing rates are measured separately by the blind baseline."
+  },
+  {
+   "name": "tolerance",
+   "status": "pass",
+   "detail": "the answer is exact (a count, a train number or a list of train numbers); no tolerance needed",
+   "limit": "No task in this family has a continuous numeric answer."
+  }
+ ],
+ "rejected_attempts": []
+}

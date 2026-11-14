@@ -1,0 +1,88 @@
+{
+ "model": "anthropic/claude-haiku-5.5",
+ "task_id": "tg-tg_longest-L5-s5002",
+ "status": "ok",
+ "finish_reason": "stop",
+ "error_detail": "",
+ "attempts": 1,
+ "latency_s": 15.39,
+ "usage": {
+  "prompt_tokens": 2407,
+  "completion_tokens": 3059,
+  "total_tokens": 5466,
+  "cost": 0.0017702,
+  "is_byok": false,
+  "prompt_tokens_details": {
+   "cached_tokens": 0,
+   "cache_write_tokens": 0,
+   "audio_tokens": 0,
+   "video_tokens": 0
+  },
+  "cost_details": {
+   "upstream_inference_cost": 0.0017702,
+   "upstream_inference_prompt_cost": 0.0002407,
+   "upstream_inference_completions_cost": 0.0015295
+  },
+  "completion_tokens_details": {
+   "reasoning_tokens": 2896,
+   "image_tokens": 0,
+   "audio_tokens": 0
+  }
+ },
+ "content": "The longest stop is train **6102** at **Rushton**. Its green line sits horizontally at Rushton from about 14:03 to 14:20, roughly 17 minutes.\n\nI estimated this from the chart by comparing horizontal stretches. The next longest I found were about 14–15 minutes (freight 6103 at Carrow and the green train at Elmfield Jn), so the Rushton stop is the longest, though my pixel estimates are approximate.\n\nFINAL ANSWER: 6102",
+ "response_body": {
+  "id": "gen-1794688845-pVNnVzhQhUvAcOdKbTVo",
+  "object": "chat.completion",
+  "created": 1794688845,
+  "model": "anthropic/claude-haiku-5.5",
+  "provider": "Claude Platform on AWS",
+  "system_fingerprint": null,
+  "service_tier": "default",
+  "choices": [
+   {
+    "index": 0,
+    "logprobs": null,
+    "finish_reason": "stop",
+    "native_finish_reason": "end_turn",
+    "message": {
+     "role": "assistant",
+     "content": "The longest stop is train **6102** at **Rushton**. Its green line sits horizontally at Rushton from about 14:03 to 14:20, roughly 17 minutes.\n\nI estimated this from the chart by comparing horizontal stretches. The next longest I found were about 14–15 minutes (freight 6103 at Carrow and the green train at Elmfield Jn), so the Rushton stop is the longest, though my pixel estimates are approximate.\n\nFINAL ANSWER: 6102",
+     "refusal": null,
+     "reasoning": "I'm looking for the longest horizontal stretch in the chart, so I'm going through the stations and their positions. I'm also mapping the time axis, where 13:00 sits at x=176 and 17:00 at x=1500.\n\nNow I'm working out the time scale: 240 minutes spread over 1324 px, which gives about 5.5 px per minute, so 30 minutes is roughly 165 px. Next I'm hunting for the longest flat horizontal run, and the best candidate so far is the green line at Rushton, about 93 px or 17 minutes, though I'm still checking the others.\n\nNow I'm checking the green segments near Linton Moor and Wyeford for horizontal runs that might beat the 93 px at Rushton, and I'm also looking at a possible blue run at Carrow.\n\nI'm checking the green segment at Carrow, which seems to run about 80 px, roughly 14.5 minutes. Then I'm looking at a blue run near Stonebridge and a couple of short red and blue pieces at Elmfield Jn, none of which look long enough to matter.\n\nNow I'm checking the green segment that runs from Rushton toward Elmfield Jn, which looks like about 80 px, roughly 14.5 minutes, and I'm also noting a short red piece near Elmfield.\n\nI'm still checking the green segments around Stonebridge, Hadley Vale and Rushton for horizontal runs, but none so far look longer than the 93 px one at Rushton.\n\nNow I'm checking a few more green segments near Rushton, Carrow, and Linton Moor, but the ones I can see so far are all shorter than the 93 px run at Rushton.\n\nNow I'm going through the remaining horizontal segments near Ashby Halt, which run about 45 to 65 px, none of them longer than the Rushton run. I'm also checking a few short red and blue pieces around Carrow and Wyeford, though none of those look long enough to beat the current best.\n\nNow I'm double-checking the green segment at Rushton, which looks like the 93 px run, and comparing it against the roughly 80 px runs at Elmfield and Carrow and the 65 px run at Ashby.\n\nI'm checking the green Rushton segment against its neighbours: the line comes in around x=525, runs flat to 618, which is the 93 px stretch, and then drops away toward Elmfield.\n\nI'm checking whether any other segment beats the Rushton run, starting with the blue line near Stonebridge and the short piece at Rushton, but neither looks long enough. The red line at Hadley doesn't seem to qualify either. Then I'm rechecking the green 6104 and 6106 runs at Hadley Vale, which come to about 43 px and less, so the Rushton stretch still wins at roughly 17 minutes.\n\n",
+     "reasoning_details": [
+      {
+       "type": "reasoning.text",
+       "text": "I'm looking for the longest horizontal stretch in the chart, so I'm going through the stations and their positions. I'm also mapping the time axis, where 13:00 sits at x=176 and 17:00 at x=1500.\n\nNow I'm working out the time scale: 240 minutes spread over 1324 px, which gives about 5.5 px per minute, so 30 minutes is roughly 165 px. Next I'm hunting for the longest flat horizontal run, and the best candidate so far is the green line at Rushton, about 93 px or 17 minutes, though I'm still checking the others.\n\nNow I'm checking the green segments near Linton Moor and Wyeford for horizontal runs that might beat the 93 px at Rushton, and I'm also looking at a possible blue run at Carrow.\n\nI'm checking the green segment at Carrow, which seems to run about 80 px, roughly 14.5 minutes. Then I'm looking at a blue run near Stonebridge and a couple of short red and blue pieces at Elmfield Jn, none of which look long enough to matter.\n\nNow I'm checking the green segment that runs from Rushton toward Elmfield Jn, which looks like about 80 px, roughly 14.5 minutes, and I'm also noting a short red piece near Elmfield.\n\nI'm still checking the green segments around Stonebridge, Hadley Vale and Rushton for horizontal runs, but none so far look longer than the 93 px one at Rushton.\n\nNow I'm checking a few more green segments near Rushton, Carrow, and Linton Moor, but the ones I can see so far are all shorter than the 93 px run at Rushton.\n\nNow I'm going through the remaining horizontal segments near Ashby Halt, which run about 45 to 65 px, none of them longer than the Rushton run. I'm also checking a few short red and blue pieces around Carrow and Wyeford, though none of those look long enough to beat the current best.\n\nNow I'm double-checking the green segment at Rushton, which looks like the 93 px run, and comparing it against the roughly 80 px runs at Elmfield and Carrow and the 65 px run at Ashby.\n\nI'm checking the green Rushton segment against its neighbours: the line comes in around x=525, runs flat to 618, which is the 93 px stretch, and then drops away toward Elmfield.\n\nI'm checking whether any other segment beats the Rushton run, starting with the blue line near Stonebridge and the short piece at Rushton, but neither looks long enough. The red line at Hadley doesn't seem to qualify either. Then I'm rechecking the green 6104 and 6106 runs at Hadley Vale, which come to about 43 px and less, so the Rushton stretch still wins at roughly 17 minutes.\n\n",
+       "format": "anthropic-claude-v1",
+       "index": 0,
+       "signature": "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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1oYWlrdS01LjUtMjAyNjEwMDd8Y2xhdWRlLW9uLWF3cyJ9"
+      }
+     ]
+    }
+   }
+  ],
+  "usage": {
+   "prompt_tokens": 2407,
+   "completion_tokens": 3059,
+   "total_tokens": 5466,
+   "cost": 0.0017702,
+   "is_byok": false,
+   "prompt_tokens_details": {
+    "cached_tokens": 0,
+    "cache_write_tokens": 0,
+    "audio_tokens": 0,
+    "video_tokens": 0
+   },
+   "cost_details": {
+    "upstream_inference_cost": 0.0017702,
+    "upstream_inference_prompt_cost": 0.0002407,
+    "upstream_inference_completions_cost": 0.0015295
+   },
+   "completion_tokens_details": {
+    "reasoning_tokens": 2896,
+    "image_tokens": 0,
+    "audio_tokens": 0
+   }
+  }
+ }
+}

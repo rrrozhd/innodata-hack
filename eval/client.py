@@ -146,7 +146,7 @@ def _call(model: str, question: str, png, settings: Settings) -> Reply:
                     reply.content, reply.status, reply.error_detail = text, "ok", ""
                     break
                 why = "empty reply"
-        except (requests.Timeout, requests.ConnectionError) as e:
+        except requests.RequestException as e:   # timeouts, resets and broken streams are all retried
             why = type(e).__name__
         reply.retries.append({"attempt": attempt, "reason": why})
         reply.status, reply.error_detail = "api_error", f"gave up after {attempt} attempts: {why}"

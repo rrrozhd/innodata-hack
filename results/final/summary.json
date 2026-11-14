@@ -1,0 +1,113 @@
+{
+ "complete": true,
+ "placeholder": false,
+ "n_tasks": 10,
+ "total_cost_usd": 0.12,
+ "models": {
+  "anthropic/claude-haiku-5.5": {
+   "overall": {
+    "n": 10,
+    "correct": 0,
+    "accuracy": 0.0
+   },
+   "by_question_type": {
+    "tg_longest": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_meets": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_nth": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_overtakes": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_section": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    }
+   },
+   "by_level": {
+    "5": {
+     "n": 10,
+     "correct": 0,
+     "accuracy": 0.0
+    }
+   },
+   "wrong": 10,
+   "fingerprints": {
+    "unmatched": 8,
+    "slip:missed_last": 1,
+    "up_trains_only": 1
+   },
+   "fingerprint_match_rate": 0.2,
+   "fingerprint_match_rate_by_chance": 0.0621,
+   "armed_vs_disarmed": {},
+   "mean_latency_s": 50.9,
+   "cost_usd": 0.0549
+  },
+  "openai/gpt-6-luna": {
+   "overall": {
+    "n": 10,
+    "correct": 0,
+    "accuracy": 0.0
+   },
+   "by_question_type": {
+    "tg_longest": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_meets": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_nth": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_overtakes": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    },
+    "tg_section": {
+     "n": 2,
+     "correct": 0,
+     "accuracy": 0.0
+    }
+   },
+   "by_level": {
+    "5": {
+     "n": 10,
+     "correct": 0,
+     "accuracy": 0.0
+    }
+   },
+   "wrong": 10,
+   "fingerprints": {
+    "unmatched": 6,
+    "ordered_by_departure": 2,
+    "slip:missed_last": 1,
+    "up_trains_only": 1
+   },
+   "fingerprint_match_rate": 0.4,
+   "fingerprint_match_rate_by_chance": 0.0621,
+   "armed_vs_disarmed": {},
+   "mean_latency_s": 110.9,
+   "cost_usd": 0.0651
+  }
+ }
+}
