@@ -8,6 +8,7 @@ venv/
 # API keys and local settings
 .env
 .env.*
+!.env.example
 *.key
 
 # macOS
@@ -15,3 +16,6 @@ venv/
 
 # Notebooks
 .ipynb_checkpoints/
+
+# Submission zips
+dist/

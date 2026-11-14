@@ -1,0 +1,23 @@
+{
+  "_placeholder": true,
+  "models": [
+    {"name": "Claude Haiku 5.5", "openrouter_slug": "PLACEHOLDER"},
+    {"name": "GPT-6 Luna", "openrouter_slug": "PLACEHOLDER"}
+  ],
+  "temperature": 0,
+  "reasoning_effort": "PLACEHOLDER: high",
+  "max_tokens": "PLACEHOLDER: fixed limit, value not set",
+  "pricing": {
+    "_source": "PLACEHOLDER: copy from the OpenRouter model pricing page by hand. Not fetched at runtime.",
+    "_as_of": "PLACEHOLDER: date the prices were copied",
+    "Claude Haiku 5.5": {"usd_per_million_input": "PLACEHOLDER", "usd_per_million_output": "PLACEHOLDER"},
+    "GPT-6 Luna": {"usd_per_million_input": "PLACEHOLDER", "usd_per_million_output": "PLACEHOLDER"}
+  },
+  "format_checker": {
+    "enabled": false,
+    "command": "PLACEHOLDER: organizer's CLI checker command"
+  },
+  "run_date": "PLACEHOLDER",
+  "git_commit": "PLACEHOLDER",
+  "prompt_version": "PLACEHOLDER"
+}
