@@ -1,22 +1,64 @@
-# innodata-hack
+# innodata-hack: Visual Task Factory
 
-A pipeline that generates verifiable visual tasks for evaluating AI models. Each task has an image, a question, structured data, a computed reference answer, and validity checks. Two models (Claude Haiku 5.5 and GPT-6 Luna) are evaluated on every task through OpenRouter and their answers are scored.
+## What this project is
 
-**Status:** the runner is built and self-tested. The generators (the code that makes the actual tasks) now include a family of synthetic patient-monitoring chart generators. `python3 run_tests.py --selftest` passes 149 checks with no keys and no network. Live calls to OpenRouter have **not** been tested yet.
+The Visual Task Factory builds **verifiable visual tasks** for evaluating AI models. A task is one image, one question about the image, the structured data the image was drawn from, and a reference answer that is computed in code from that data, never typed by hand. Every task passes a set of validity checks before it is used.
+
+The pipeline then asks two models, Claude Haiku 5.5 and GPT-6 Luna (called through OpenRouter), to answer every valid task, scores the answers against the computed reference, and writes a scorecard against the visual-track rubric.
+
+## Use case
+
+Real visual inputs are often the only source of information: a paper ECG strip, a PDF printout, a photo of a monitor, a diagram. This project produces test items where:
+
+- the picture is the only source of the answer (the question cannot be answered from the text alone),
+- the answer is known exactly, because it comes from the saved data,
+- a person can check each task by hand (a review sheet and a hand-check ledger are included),
+- the whole set can be regenerated from a seed, so the same seed gives the same images and answers.
+
+The current tasks are synthetic ECG rhythm strips, patient-monitoring charts, and (switched off for now) overlay and ownership-chart pictures. All of them are made up from simple rules. None is a clinical case, and no question asks for a diagnosis.
+
+## Rubric (visual track, 35 points)
+
+`runner/scorecard.py` prints one line of evidence per rubric item, with a READY / ATTENTION / HUMAN / NOT RUN status:
+
+| Item | Weight | Where it is checked |
+|------|--------|---------------------|
+| Realistic and useful visuals | 20% | stage 2 (g, h); the HUMAN item |
+| Reliable generation | 20% | stages 1-2 (a, b) |
+| Fair and verifiable tasks | 15% | stage 2 (c-f) |
+| Task difficulty | 15% | stage 5 |
+| Meaningful variation | 10% | stage 3 |
+| Model evaluation | 10% | stage 4 |
+| Runnable submission | 10% | stages 0 and 6, and `--package` |
+
+## Status
+
+The runner is built and self-tested: `python3 run_tests.py --selftest` passes 150 checks with no keys and no network. Live calls to OpenRouter have **not** been tested yet.
 
 ## Quick start
 
+Python 3.12 is recommended (3.10+ works).
+
 ```
-python3 -m venv .venv && source .venv/bin/activate     # Python 3.12+ recommended (3.10+ works)
-cp .env.example .env                                   # then put OPENROUTER_API_KEY=... in .env (git-ignored)
-python3 run_tests.py --selftest                         # proves the runner works; needs no keys
-python3 -m generate.new_generator my_chart              # step 1: create a generator, then fill it in
-python3 -m generate.new_generator my_flow --mermaid     # ...or a Mermaid-diagram generator (fixed question), see "Mermaid generators"
-python3 run_tests.py --generate --dry-run               # generate tasks, validate, preview the model calls (no spend)
-python3 run_tests.py                                    # the full run (needs model slugs + key, see "Configuration")
+# 1. set up (Pillow is needed to draw the ECG and chart images; the runner itself is standard library only)
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# 2. prove the runner works (no keys, no network)
+python3 run_tests.py --selftest
+
+# 3. generate tasks and check them, without calling any model
+python3 run_tests.py --generate --stage 0-3
+
+# 4. preview the model calls, with no spend
+python3 run_tests.py --stage 4 --dry-run
+
+# 5. live run (needs a key and real model slugs, see "Configuration")
+cp .env.example .env                 # then put OPENROUTER_API_KEY=... in .env (git-ignored)
+python3 run_tests.py
 ```
 
-The runner uses only the Python standard library. `requirements.txt` is unchanged: `pillow`/`pandas` are there for generators to use, and `anthropic`/`openai` are not used by the runner (OpenRouter is called over plain HTTPS).
+The runner itself uses only the Python standard library. `anthropic` and `openai` in `requirements.txt` are not used: OpenRouter is called over plain HTTPS. To write a new generator, see "Writing a generator" and `docs/ADDING_TESTS.md`.
 
 ## Layout
 
@@ -287,7 +329,7 @@ Not run yet. After the first real run, paste `results/summary.md` here (stage 5 
 
 ## What has and has not been tested
 
-Tested by `--selftest` (66 checks, no network): answer extraction and scoring; the OpenRouter client against a local fake server (retry on 429, truncation, hard errors, request shape, key header); the whole pipeline with demo generators and a mock model (generate, validate, variation, evaluate, score, scorecard); a deliberately truncated reply being flagged and re-run only once; tampered answers and images being caught; the secret scan and zip contents; placeholder handling; running from another folder; and that the original entry points still start.
+Tested by `--selftest` (150 checks, no network): answer extraction and scoring; the OpenRouter client against a local fake server (retry on 429, truncation, hard errors, request shape, key header); the whole pipeline with demo generators and a mock model (generate, validate, variation, evaluate, score, scorecard); a deliberately truncated reply being flagged and re-run only once; tampered answers and images being caught; the secret scan and zip contents; placeholder handling; running from another folder; and that the original entry points still start.
 
 **Not tested:** real calls to OpenRouter (the exact response fields for reasoning tokens and cost may differ by provider), the organizer's format checker, and anything on Windows.
 
