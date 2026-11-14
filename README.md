@@ -54,4 +54,4 @@ Planned setup:
 - Exact OpenRouter slugs for Claude Haiku 5.5 and GPT-6 Luna.
 - Reasoning-effort setting and fixed max token value.
 - Whether `anthropic` stays in `requirements.txt` if both models go through OpenRouter.
-- Role of `slides/` and whether `run_all.py` should be the single entry point.
+- `slides/` is kept as-is; its contents are not described yet.
