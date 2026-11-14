@@ -20,11 +20,24 @@ Rules the shell enforces for you:
     * render() and compute_answer() only ever see the data dict that was SAVED to disk.
     * If the answer is numeric and `tolerance` is set, the tolerance sentence is added to the
       question automatically (the rules require it to be stated in the prompt).
+
+Optional settings for generators whose picture is drawn from SOURCE CODE (e.g. Mermaid) and/or that
+ask the SAME question every time (only the picture and the answer change):
+    question_template = "..."   the question text. {field} placeholders are filled from the data dict.
+                                With a template you do not need to write make_question().
+    exact_answer = True         the number is an exact count, not an estimate, so no tolerance is expected.
+    fixed_question = True       say that every task deliberately asks the identical question. The
+                                variation report then calls that "by design" instead of warning.
+                                (Only valid when the template has no {placeholders}.)
+    source_key = "mermaid"      the data dict holds the diagram's source code under this key. The runner
+    source_ext = "mmd"          checks it is there and ALSO saves a copy to tasks/source/<task_id>.mmd so
+                                a human can open it. The data JSON stays the source of truth.
 """
 from __future__ import annotations
 
 import hashlib
 import random
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -89,9 +102,15 @@ class TaskGenerator:
     question_type: str = ""  # short label for the kind of question, e.g. "read peak value"
     answer_type: str = "number"  # "number" | "text" | "choice"
     tolerance: float | None = None  # numeric answers: accepted +/- (None = exact match)
+    exact_answer: bool = False  # True = the number is an exact count/whole answer, not a visual estimate (no tolerance warning)
     real_world_examples: list[str] = []  # CITE 1-2 real examples behind this visual (rules)
     image_ext: str = "png"
     enabled: bool = True  # False = discovered but skipped (use while half-finished)
+    # ---- optional: same question every time / picture drawn from source code ----------------
+    question_template: str | None = None  # question text; {field} placeholders come from the data dict
+    fixed_question: bool = False  # True = every task asks the identical sentence ON PURPOSE
+    source_key: str | None = None  # data[source_key] holds the diagram source (e.g. Mermaid text)
+    source_ext: str = "txt"  # extension of the copy saved in tasks/source/ (e.g. "mmd")
 
     # ---- REQUIRED ---------------------------------------------------------------------------
     def generate_data(self, rng: random.Random, index: int) -> dict:
@@ -107,8 +126,12 @@ class TaskGenerator:
         raise NotImplementedError("TODO: implement compute_answer()")
 
     def make_question(self, data: dict) -> str:
-        """The question shown to the model. Must NOT reveal the data the image shows."""
-        raise NotImplementedError("TODO: implement make_question()")
+        """The question shown to the model. Must NOT reveal the data the image shows.
+
+        Not needed when `question_template` is set (the template is used)."""
+        if self.question_template:
+            return self.question_template.format_map(data) if "{" in self.question_template else self.question_template
+        raise NotImplementedError("TODO: implement make_question() or set question_template")
 
     # ---- OPTIONAL hooks (strongly recommended: they are judged as 'verifiable tasks') -------
     def verify_render(self, data: dict, image_path: Path) -> CheckResult:
@@ -129,10 +152,16 @@ class TaskGenerator:
         return CheckResult.skip("no generator-specific needs-image check (generic leak check only)")
 
     # ---- helpers the shell uses (don't override) --------------------------------------------
+    def tolerance_for(self, data: dict) -> float | None:
+        """The accepted +/- for THIS task. Defaults to the class `tolerance`; override it when the right tolerance
+        depends on the data (e.g. 3% of the chart's axis range)."""
+        return self.tolerance
+
     def build_question(self, data: dict) -> str:
         question = self.make_question(data).strip()
-        if self.answer_type == "number" and self.tolerance is not None:
-            tol = format_tolerance(self.tolerance)
+        tolerance = self.tolerance_for(data)
+        if self.answer_type == "number" and tolerance is not None:
+            tol = format_tolerance(tolerance)
             if tol not in question:
                 question += f" Answers within +/-{tol} of the correct value are accepted."
         return question
@@ -147,8 +176,14 @@ class TaskGenerator:
 
     def implemented(self) -> dict[str, bool]:
         base = TaskGenerator
-        return {
+        out = {
             m: getattr(type(self), m) is not getattr(base, m)
             for m in ("generate_data", "render", "compute_answer", "make_question",
                       "verify_render", "question_needs_image")
         }
+        if self.question_template:  # a template stands in for make_question()
+            out["make_question"] = True
+        return out
+
+    def question_has_placeholders(self) -> bool:
+        return bool(self.question_template) and bool(re.search(r"\{[^{}]+\}", self.question_template))

@@ -33,6 +33,9 @@ def _clean_previous(cfg: Config, ui: UI, only: str | None = None) -> None:
             if p.exists():
                 p.unlink()
                 removed += 1
+        for p in (cfg.tasks_dir / "source").glob(f"{t.id}.*"):  # diagram source copies (e.g. .mmd)
+            p.unlink()
+            removed += 1
     if removed:
         ui.info(f"removed {removed} file(s) from the previous generation run")
 
@@ -82,6 +85,14 @@ def generate_all(cfg: Config, ui: UI, registry: Registry, count: int | None = No
             data = to_jsonable(gen.generate_data(random.Random(seed), idx))
             (cfg.root / data_rel).write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
             data = json.loads((cfg.root / data_rel).read_text(encoding="utf-8"))  # use what was SAVED
+            if gen.source_key:
+                src = data.get(gen.source_key)
+                if not isinstance(src, str) or not src.strip():
+                    raise ValueError(f"data[{gen.source_key!r}] must hold the diagram source text, got "
+                                     f"{type(src).__name__}; put the source in the data dict under that key")
+                (cfg.tasks_dir / "source").mkdir(parents=True, exist_ok=True)
+                (cfg.tasks_dir / "source" / f"{task_id}.{gen.source_ext}").write_text(
+                    src.rstrip("\n") + "\n", encoding="utf-8")
             step = "render"
             gen.render(data, cfg.root / img_rel)
             if not (cfg.root / img_rel).exists():
@@ -100,13 +111,13 @@ def generate_all(cfg: Config, ui: UI, registry: Registry, count: int | None = No
             id=task_id, generator=gen.name, index=idx, seed=seed, visual_type=gen.visual_type,
             question_type=gen.question_type, image_path=img_rel, data_path=data_rel,
             question=question, answer=answer, answer_type=gen.answer_type,
-            tolerance=gen.tolerance, real_world_examples=list(gen.real_world_examples),
+            tolerance=gen.tolerance_for(data), real_world_examples=list(gen.real_world_examples),
             schema_version=SCHEMA_VERSION,
         ))
         per_gen[gen.name] = per_gen.get(gen.name, 0) + 1
         ui.pass_(f"{task_id}: data -> image -> answer -> question")
         ui.detail(f"answer = {answer!r} ({gen.answer_type}"
-                  + (f", tolerance +/-{gen.tolerance:g}" if gen.tolerance is not None else "") + ")")
+                  + (f", tolerance +/-{gen.tolerance_for(data):g}" if gen.tolerance_for(data) is not None else "") + ")")
         ui.verbose_detail(f"question: {question}")
 
     if kept:
@@ -121,6 +132,16 @@ def generate_all(cfg: Config, ui: UI, registry: Registry, count: int | None = No
     (cfg.results_dir / "generation_report.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
     ui.info(f"wrote {cfg.tasks_file.relative_to(cfg.root)} ({len(tasks)} task(s)) and generation_report.json")
     return kept + tasks, report
+
+
+def _write_review_sheet(cfg: Config, ui: UI) -> None:
+    """Refresh tasks/review.html and tasks/REVIEW.md (a human-readable view of the tasks). Never breaks generation."""
+    try:
+        from generate import review_sheet
+        if review_sheet.build(cfg.root):
+            ui.info("wrote tasks/review.html and tasks/REVIEW.md (pictures + questions + answers for human checking)")
+    except Exception as exc:  # noqa: BLE001
+        ui.warn(f"could not write the review sheet: {exc}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -142,6 +163,7 @@ def main(argv: list[str] | None = None) -> int:
     ui = UI(color=False if args.no_color else None)
     ui.banner("G", "Generate tasks", "run the generators -> tasks/")
     _, report = generate_all(cfg, ui, discover(), count=args.count, only=args.generator)
+    _write_review_sheet(cfg, ui)
     ui.end_stage()
     return 1 if ui.totals["fail"] else 0
 

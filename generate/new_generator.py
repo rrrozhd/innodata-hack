@@ -1,4 +1,8 @@
-"""Create a new generator file from the template:  python -m generate.new_generator my_chart_name"""
+"""Create a new generator file from a template:
+
+    python3 -m generate.new_generator my_chart_name              (blank template)
+    python3 -m generate.new_generator my_flowchart --mermaid     (Mermaid diagram + fixed question)
+"""
 from __future__ import annotations
 
 import re
@@ -8,15 +12,17 @@ from pathlib import Path
 GEN_DIR = Path(__file__).resolve().parent / "generators"
 
 
-def create(name: str) -> Path:
-    """Copy _template.py to generators/<name>.py (never overwrites). Raises ValueError with a readable message."""
+def create(name: str, mermaid: bool = False) -> Path:
+    """Copy _template.py (or _template_mermaid.py) to generators/<name>.py (never overwrites).
+
+    Raises ValueError with a readable message."""
     name = name.strip()
     if not re.fullmatch(r"[a-z][a-z0-9_]*", name):
         raise ValueError("name must be snake_case: lowercase letters, digits, underscores, starting with a letter")
     dest = GEN_DIR / f"{name}.py"
     if dest.exists():
         raise ValueError(f"{dest.name} already exists; not overwriting")
-    text = (GEN_DIR / "_template.py").read_text(encoding="utf-8")
+    text = (GEN_DIR / ("_template_mermaid.py" if mermaid else "_template.py")).read_text(encoding="utf-8")
     camel = "".join(part.capitalize() for part in name.split("_")) + "Generator"
     text = text.replace("class MyGenerator", f"class {camel}").replace('name = "my_generator"', f'name = "{name}"')
     dest.write_text(text, encoding="utf-8")
@@ -25,11 +31,13 @@ def create(name: str) -> Path:
 
 def main(argv: list[str] | None = None) -> int:
     args = sys.argv[1:] if argv is None else argv
+    mermaid = "--mermaid" in args
+    args = [a for a in args if a != "--mermaid"]
     if len(args) != 1:
-        print("usage: python -m generate.new_generator my_chart_name")
+        print("usage: python3 -m generate.new_generator my_chart_name [--mermaid]")
         return 2
     try:
-        dest = create(args[0])
+        dest = create(args[0], mermaid=mermaid)
     except ValueError as exc:
         print(f"[FAIL] {exc}")
         return 1

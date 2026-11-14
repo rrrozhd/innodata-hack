@@ -40,6 +40,13 @@ class Registry:
                           "you to cite one or two real examples behind each image)")
         if gen.tolerance is not None and (not isinstance(gen.tolerance, (int, float)) or gen.tolerance < 0):
             issues.append("`tolerance` must be None or a non-negative number")
+        if gen.fixed_question and gen.question_has_placeholders():
+            issues.append("`fixed_question = True` means every task asks the identical sentence, but "
+                          "`question_template` has {placeholders}; remove them or set fixed_question = False")
+        if gen.source_key is not None and not (isinstance(gen.source_key, str) and gen.source_key):
+            issues.append("`source_key` must be None or the name of the data field that holds the source code")
+        if not re.fullmatch(r"[a-z0-9]+", gen.source_ext or ""):
+            issues.append("`source_ext` must be lowercase letters/digits, e.g. 'mmd'")
         if gen.name in self.generators:
             issues.append(f"duplicate generator name {gen.name!r}")
         if not gen.enabled:
