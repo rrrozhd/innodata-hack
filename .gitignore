@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# API keys and local settings
+.env
+.env.*
+*.key
+
+# macOS
+.DS_Store
+
+# Notebooks
+.ipynb_checkpoints/

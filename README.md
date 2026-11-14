@@ -12,8 +12,8 @@ README.md     what's here, pilot results, how to run it
 
 ## Pilot results
 
-No pilot runs yet.
+
 
 ## How to run
 
-Not yet defined. Add the validation and evaluation commands here once `validate/` and `eval/` have code.
+

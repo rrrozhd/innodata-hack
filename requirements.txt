@@ -1,0 +1,7 @@
+# Image handling for the rendering checks
+pillow
+# Structured data and results tables
+pandas
+# Model SDK
+anthropic
+openai
