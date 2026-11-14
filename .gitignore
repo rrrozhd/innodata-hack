@@ -8,6 +8,7 @@ venv/
 # API keys and local settings
 .env
 .env.*
+!.env.example
 *.key
 
 # macOS
