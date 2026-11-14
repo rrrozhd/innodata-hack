@@ -15,3 +15,15 @@ venv/
 
 # Notebooks
 .ipynb_checkpoints/
+__pycache__/
+*.pyc
+.venv/
+venv/
+out/
+*.zip
+.env
+.env.*
+gallery.html
+out/
+archive/
+*.zip
