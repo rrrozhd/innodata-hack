@@ -1,0 +1,13 @@
+{
+  "_placeholder": true,
+  "models": [
+    {"name": "Claude Haiku 5.5", "openrouter_slug": "PLACEHOLDER"},
+    {"name": "GPT-6 Luna", "openrouter_slug": "PLACEHOLDER"}
+  ],
+  "temperature": 0,
+  "reasoning_effort": "PLACEHOLDER: high",
+  "max_tokens": "PLACEHOLDER: fixed limit, value not set",
+  "run_date": "PLACEHOLDER",
+  "git_commit": "PLACEHOLDER",
+  "prompt_version": "PLACEHOLDER"
+}
