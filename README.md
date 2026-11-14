@@ -31,7 +31,7 @@ pip install -r requirements.txt
 python -m factory fresh --seed 5001 --program tg_meets --level 5 --models mock:oracle
 
 # build a task folder
-python -m factory generate --out tasks/final --programs tg_overtakes,tg_meets,tg_section,tg_nth,tg_longest --seeds 5000-5009 --level 5
+python -m factory generate --out tasks/final --program tg_overtakes,tg_meets,tg_section,tg_nth,tg_longest --seeds 5000-5001 --levels 5
 
 # validate every task in a folder
 python -m validate.run_validate --tasks tasks/final
