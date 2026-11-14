@@ -1,23 +1,67 @@
 {
   "_placeholder": true,
   "models": [
-    {"name": "Claude Haiku 5.5", "openrouter_slug": "PLACEHOLDER"},
-    {"name": "GPT-6 Luna", "openrouter_slug": "PLACEHOLDER"}
+    {
+      "name": "Claude Haiku 5.5",
+      "openrouter_slug": "anthropic/claude-haiku-5.5"
+    },
+    {
+      "name": "GPT-6 Luna",
+      "openrouter_slug": "openai/gpt-6-luna"
+    }
   ],
   "temperature": 0,
-  "reasoning_effort": "PLACEHOLDER: high",
-  "max_tokens": "PLACEHOLDER: fixed limit, value not set",
+  "reasoning_effort": "high",
+  "max_tokens": 16000,
   "pricing": {
-    "_source": "PLACEHOLDER: copy from the OpenRouter model pricing page by hand. Not fetched at runtime.",
-    "_as_of": "PLACEHOLDER: date the prices were copied",
-    "Claude Haiku 5.5": {"usd_per_million_input": "PLACEHOLDER", "usd_per_million_output": "PLACEHOLDER"},
-    "GPT-6 Luna": {"usd_per_million_input": "PLACEHOLDER", "usd_per_million_output": "PLACEHOLDER"}
+    "_source": "openrouter.ai/anthropic/claude-haiku-5.5 and openrouter.ai/openai/gpt-6-luna model pages, copied by hand. Not fetched at runtime.",
+    "_as_of": "2026-11-14",
+    "Claude Haiku 5.5": {
+      "usd_per_million_input": 0.1,
+      "usd_per_million_output": 0.5
+    },
+    "GPT-6 Luna": {
+      "usd_per_million_input": 0.1,
+      "usd_per_million_output": 0.5
+    }
   },
   "format_checker": {
     "enabled": false,
     "command": "PLACEHOLDER: organizer's CLI checker command"
   },
-  "run_date": "PLACEHOLDER",
-  "git_commit": "PLACEHOLDER",
-  "prompt_version": "PLACEHOLDER"
+  "run_date": "2026-11-14T14:59:59",
+  "git_commit": "b5ee185",
+  "prompt_version": "20da8c452e8a",
+  "settings": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "request_timeout_s": 300,
+    "max_api_retries": 3,
+    "base_url": "https://openrouter.ai/api/v1"
+  },
+  "answer_instruction": "Think it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+  "tasks_evaluated": [
+    "ecg_beat_count_000",
+    "ecg_ectopic_count_000",
+    "ecg_interval_000",
+    "ecg_premature_beat_000",
+    "ecg_rate_000",
+    "ecg_beat_count_001",
+    "ecg_ectopic_count_001",
+    "ecg_interval_001",
+    "ecg_premature_beat_001",
+    "ecg_rate_001"
+  ],
+  "last_run": {
+    "calls_made": 20,
+    "cached_reused": 0,
+    "spent_usd": 0.0073,
+    "calls_with_unknown_cost": 0
+  },
+  "environment": {
+    "python": "3.12.7",
+    "platform": "macOS-26.7.1-arm64-arm-64bit"
+  },
+  "policy": "API errors and token cutoffs are invalid and re-run; they are never scored."
 }
