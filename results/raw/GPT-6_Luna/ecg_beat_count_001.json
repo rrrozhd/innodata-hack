@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_beat_count_001",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "6fb5dcbc6f2f217b",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "FINAL ANSWER: 25",
+  "error": "",
+  "cost_usd": 0.0002204,
+  "latency_s": 5.000999927520752,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:59:36",
+  "usage": {
+    "prompt_tokens": 669,
+    "completion_tokens": 307,
+    "reasoning_tokens": 295
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "This is a 10-second ECG rhythm strip (standard grid: 25 mm/s). How many QRS complexes (heartbeats) are on the strip? Give a whole number.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_beat_count_001.png"
+  }
+}

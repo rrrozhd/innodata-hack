@@ -1,0 +1,794 @@
+{
+  "timestamp": "2026-11-14T14:58:14",
+  "valid": [
+    "ecg_beat_count_000",
+    "ecg_ectopic_count_000",
+    "ecg_interval_000",
+    "ecg_premature_beat_000",
+    "ecg_rate_000",
+    "ecg_beat_count_001",
+    "ecg_ectopic_count_001",
+    "ecg_interval_001",
+    "ecg_premature_beat_001",
+    "ecg_rate_001"
+  ],
+  "invalid": [],
+  "counts": {
+    "pass": 130,
+    "fail": 0,
+    "warn": 10,
+    "skip": 10
+  },
+  "tasks": {
+    "ecg_beat_count_000": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_beat_count' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "exact numeric answer (the generator declares exact_answer = True), so no tolerance is needed"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_beat_count_000.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 18023 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 439 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (24)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_ectopic_count_000": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_ectopic_count' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "exact numeric answer (the generator declares exact_answer = True), so no tolerance is needed"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_ectopic_count_000.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 18866 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 432 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (4)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_interval_000": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_interval' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "tolerance +/-0.5 is stated in the prompt"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_interval_000.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 16956 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 432 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (19.4)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_premature_beat_000": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_premature_beat' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "exact numeric answer (the generator declares exact_answer = True), so no tolerance is needed"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_premature_beat_000.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 16719 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 435 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (7)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_rate_000": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_rate' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "tolerance +/-3 is stated in the prompt"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_rate_000.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 17330 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 442 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (167)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_beat_count_001": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_beat_count' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "exact numeric answer (the generator declares exact_answer = True), so no tolerance is needed"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_beat_count_001.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 17184 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 437 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (25)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_ectopic_count_001": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_ectopic_count' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "exact numeric answer (the generator declares exact_answer = True), so no tolerance is needed"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_ectopic_count_001.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 17642 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 436 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (3)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_interval_001": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_interval' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "tolerance +/-0.5 is stated in the prompt"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_interval_001.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 17120 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 433 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (12.26)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_premature_beat_001": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_premature_beat' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "exact numeric answer (the generator declares exact_answer = True), so no tolerance is needed"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_premature_beat_001.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 18360 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 437 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (5)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ],
+    "ecg_rate_001": [
+      {
+        "check": "generator_registered",
+        "status": "pass",
+        "message": "generator 'ecg_rate' found"
+      },
+      {
+        "check": "question_present",
+        "status": "pass",
+        "message": "question text present"
+      },
+      {
+        "check": "tolerance_stated",
+        "status": "pass",
+        "message": "tolerance +/-3 is stated in the prompt"
+      },
+      {
+        "check": "examples_cited",
+        "status": "pass",
+        "message": "2 real-world example(s) cited"
+      },
+      {
+        "check": "hand_checked",
+        "status": "warn",
+        "message": "not hand-checked yet (required before submitting)"
+      },
+      {
+        "check": "data_loads",
+        "status": "pass",
+        "message": "data file loads (tasks/data/ecg_rate_001.json)"
+      },
+      {
+        "check": "data_nonempty",
+        "status": "pass",
+        "message": "data is non-empty"
+      },
+      {
+        "check": "data_reproducible",
+        "status": "pass",
+        "message": "regenerating from the seed gives identical data"
+      },
+      {
+        "check": "image_valid",
+        "status": "pass",
+        "message": "image exists and looks valid (png, 1584x320px, 17798 bytes)"
+      },
+      {
+        "check": "render_reproducible",
+        "status": "pass",
+        "message": "re-rendering gives a byte-identical image"
+      },
+      {
+        "check": "render_matches_data",
+        "status": "pass",
+        "message": "grid scale and 439 trace positions match the picture"
+      },
+      {
+        "check": "answer_recomputes",
+        "status": "pass",
+        "message": "recomputed answer matches the stored answer (181)"
+      },
+      {
+        "check": "question_needs_image",
+        "status": "pass",
+        "message": "question text shares only 0% of the data values"
+      },
+      {
+        "check": "answer_not_in_question",
+        "status": "pass",
+        "message": "the answer does not appear in the question"
+      },
+      {
+        "check": "generator_needs_image_hook",
+        "status": "skip",
+        "message": "no generator-specific needs-image check (generic leak check only)"
+      }
+    ]
+  }
+}

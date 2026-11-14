@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_interval_001",
+  "model_label": "Claude Haiku 5.5",
+  "model_id": "anthropic/claude-haiku-5.5",
+  "request_key": "3b0fed2fa8e288dc",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "The distance is about 12.2 large boxes.\n\n1. **Scale:** The strip spans about 1500 px for 10 s (50 large boxes at 25 mm/s), so one large box is about 30 px.\n2. **Tall peaks:** The sharp, tall spikes (QRS complexes) sit at roughly x ≈ 158, 203, 288, 369, 422, 489, 552, 612, 666, 711, 782, 868, 919, 979, 1037, 1110, 1172, 1231, 1308, 1365, 1412 px.\n3. **Beats 7 and 13:** Beat 7 is at about x ≈ 552 px and beat 13 at about x ≈ 919 px.\n4. **Distance:** 919 − 552 = 367 px, and 367 / 30 ≈ 12.2 large boxes (about 2.4 s).\n\nThese pixel positions are estimated by eye from the image, so the result is approximate.\n\nFINAL ANSWER: 12.2",
+  "error": "",
+  "cost_usd": 0.0007811,
+  "latency_s": 6.3508620262146,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:58:46",
+  "usage": {
+    "prompt_tokens": 831,
+    "completion_tokens": 1396,
+    "reasoning_tokens": 1070
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Measure on the grid (large box = 5 mm = 0.2 s) the distance from the tall peak of beat 7 to the tall peak of beat 13 (beats counted from the left, first beat = 1). How many large boxes is it? Answers within +/-0.5 of the correct value are accepted.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_interval_001.png"
+  }
+}

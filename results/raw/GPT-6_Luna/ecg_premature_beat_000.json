@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_premature_beat_000",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "dd7a05a611a85bb4",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "The early, wider, taller complex is the 7th QRS from the left.\n\nFINAL ANSWER: 7",
+  "error": "",
+  "cost_usd": 0.0002122,
+  "latency_s": 5.740994930267334,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:59:21",
+  "usage": {
+    "prompt_tokens": 677,
+    "completion_tokens": 289,
+    "reasoning_tokens": 259
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "One beat on this 10-second ECG rhythm strip arrives early and looks wider and taller than the others. Counting the QRS complexes from the left and starting at 1, which beat is it? Give a whole number.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_premature_beat_000.png"
+  }
+}

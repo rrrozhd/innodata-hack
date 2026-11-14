@@ -1,1 +1,21 @@
-task_id,model,raw_path,extracted_answer,reference_answer,correct,timestamp
+task_id,model,raw_path,extracted_answer,reference_answer,correct,timestamp,model_id,status,score_note,prompt_tokens,completion_tokens,reasoning_tokens,cost_usd,latency_s,attempts
+ecg_beat_count_000,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_beat_count_000.json,24,24,true,2026-11-14T14:58:18,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 0)",792,690,464,0.0004242,3.59,1
+ecg_ectopic_count_000,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_ectopic_count_000.json,4,4,true,2026-11-14T14:58:23,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 0)",785,811,696,0.000484,4.71,1
+ecg_interval_000,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_interval_000.json,19.4,19.4,true,2026-11-14T14:58:26,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 0.5)",831,815,462,0.0004906,3.71,1
+ecg_premature_beat_000,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_premature_beat_000.json,7,7,true,2026-11-14T14:58:29,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 0)",801,477,254,0.0003186,2.73,1
+ecg_rate_000,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_rate_000.json,167,167,true,2026-11-14T14:58:32,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 3)",840,677,379,0.0004225,3.15,1
+ecg_beat_count_001,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_beat_count_001.json,25,25,true,2026-11-14T14:58:36,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 0)",792,823,577,0.0004907,4.12,1
+ecg_ectopic_count_001,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_ectopic_count_001.json,3,3,true,2026-11-14T14:58:40,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 0)",785,674,400,0.0004155,3.58,1
+ecg_interval_001,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_interval_001.json,12.2,12.26,true,2026-11-14T14:58:46,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0.06, allowed 0.5)",831,1396,1070,0.0007811,6.35,1
+ecg_premature_beat_001,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_premature_beat_001.json,5,5,true,2026-11-14T14:58:50,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 0, allowed 0)",801,691,448,0.0004256,3.76,1
+ecg_rate_001,Claude Haiku 5.5,results/raw/Claude_Haiku_5.5/ecg_rate_001.json,180,181,true,2026-11-14T14:58:54,anthropic/claude-haiku-5.5,ok,"within tolerance (off by 1, allowed 3)",840,766,439,0.000467,4.19,1
+ecg_beat_count_000,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_beat_count_000.json,24,24,true,2026-11-14T14:59:02,openai/gpt-6-luna,ok,"within tolerance (off by 0, allowed 0)",669,260,237,0.0001969,8.12,1
+ecg_ectopic_count_000,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_ectopic_count_000.json,4,4,true,2026-11-14T14:59:07,openai/gpt-6-luna,ok,"within tolerance (off by 0, allowed 0)",670,318,291,0.000226,4.78,1
+ecg_interval_000,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_interval_000.json,11.6,19.4,false,2026-11-14T14:59:15,openai/gpt-6-luna,ok,"off by 7.8, allowed 0.5",701,569,516,0.0003546,8.43,1
+ecg_premature_beat_000,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_premature_beat_000.json,7,7,true,2026-11-14T14:59:21,openai/gpt-6-luna,ok,"within tolerance (off by 0, allowed 0)",677,289,259,0.0002122,5.74,1
+ecg_rate_000,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_rate_000.json,167 bpm,167,true,2026-11-14T14:59:31,openai/gpt-6-luna,ok,"within tolerance (off by 0, allowed 3)",699,645,586,0.0003924,10.04,1
+ecg_beat_count_001,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_beat_count_001.json,25,25,true,2026-11-14T14:59:36,openai/gpt-6-luna,ok,"within tolerance (off by 0, allowed 0)",669,307,295,0.0002204,5.0,1
+ecg_ectopic_count_001,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_ectopic_count_001.json,3,3,true,2026-11-14T14:59:41,openai/gpt-6-luna,ok,"within tolerance (off by 0, allowed 0)",670,274,262,0.000204,5.01,1
+ecg_interval_001,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_interval_001.json,12.3,12.26,true,2026-11-14T14:59:48,openai/gpt-6-luna,ok,"within tolerance (off by 0.04, allowed 0.5)",701,497,459,0.0003186,7.17,1
+ecg_premature_beat_001,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_premature_beat_001.json,5,5,true,2026-11-14T14:59:54,openai/gpt-6-luna,ok,"within tolerance (off by 0, allowed 0)",677,308,275,0.0002217,5.1,1
+ecg_rate_001,GPT-6 Luna,results/raw/GPT-6_Luna/ecg_rate_001.json,180 bpm,181,true,2026-11-14T14:59:59,openai/gpt-6-luna,ok,"within tolerance (off by 1, allowed 3)",699,327,268,0.0002334,5.65,1

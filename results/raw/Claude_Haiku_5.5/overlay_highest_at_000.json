@@ -1,0 +1,26 @@
+{
+  "task_id": "overlay_highest_at_000",
+  "model_label": "Claude Haiku 5.5",
+  "model_id": "anthropic/claude-haiku-5.5",
+  "request_key": "85f6b152ab002920",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "At minute 180, the purple line (F, Temperature) sits around +5.5 to +6.5%. The green line (E, Diastolic blood pressure) is roughly +4 to +5.5%, and the red line (C, Respiratory rate) is around +3 to +3.5%. The remaining lines (A, B, D) are all below zero at that point, so F is highest.\n\nFINAL ANSWER: F",
+  "error": "",
+  "cost_usd": 0.000318,
+  "latency_s": 3.2668251991271973,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:33:19",
+  "usage": {
+    "prompt_tokens": 1010,
+    "completion_tokens": 434,
+    "reasoning_tokens": 301
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Six lines share this chart (letters A to F, see the legend). At minute 180, which line is highest? Reply with the letter.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/overlay_highest_at_000.png"
+  }
+}

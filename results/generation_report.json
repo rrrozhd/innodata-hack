@@ -1,0 +1,14 @@
+{
+  "timestamp": "2026-11-14T14:58:14",
+  "requested": 10,
+  "generated": 10,
+  "failures": [],
+  "per_generator": {
+    "ecg_beat_count": 2,
+    "ecg_ectopic_count": 2,
+    "ecg_interval": 2,
+    "ecg_premature_beat": 2,
+    "ecg_rate": 2
+  },
+  "seed": 1234
+}

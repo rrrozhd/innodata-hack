@@ -1,0 +1,26 @@
+{
+  "task_id": "vitals_exact_reading_000",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "c0f9581c48553a3a",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "At minute 120, panel D shows about 91 mmHg.\n\nFINAL ANSWER: 91 mmHg",
+  "error": "",
+  "cost_usd": 0.00019108,
+  "latency_s": 6.338222980499268,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:36:29",
+  "usage": {
+    "prompt_tokens": 1631,
+    "completion_tokens": 349,
+    "reasoning_tokens": 321
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Read panel D (systolic blood pressure) at minute 120. What value does it show, in mmHg?\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/vitals_exact_reading_000.png"
+  }
+}

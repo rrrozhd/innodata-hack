@@ -1,0 +1,26 @@
+{
+  "task_id": "vitals_exact_reading_001",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "da585756f2b59641",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "FINAL ANSWER: 70 bpm",
+  "error": "",
+  "cost_usd": 0.0011888,
+  "latency_s": 25.087290287017822,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:29:55",
+  "usage": {
+    "prompt_tokens": 1627,
+    "completion_tokens": 1971,
+    "reasoning_tokens": 1958
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Read panel D (heart rate) at minute 150. What value does it show, in bpm?\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/vitals_exact_reading_001.png"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "overlay_highest_at_000",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "7138dcbee0b2ec54",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "FINAL ANSWER: F",
+  "error": "",
+  "cost_usd": 0.0001702,
+  "latency_s": 3.1704630851745605,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:35:48",
+  "usage": {
+    "prompt_tokens": 902,
+    "completion_tokens": 160,
+    "reasoning_tokens": 149
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Six lines share this chart (letters A to F, see the legend). At minute 180, which line is highest? Reply with the letter.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/overlay_highest_at_000.png"
+  }
+}

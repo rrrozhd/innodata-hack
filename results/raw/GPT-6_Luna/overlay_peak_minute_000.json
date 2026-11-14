@@ -1,0 +1,26 @@
+{
+  "task_id": "overlay_peak_minute_000",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "abb9e2c9603b016e",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "FINAL ANSWER: 154 minutes",
+  "error": "",
+  "cost_usd": 0.000149,
+  "latency_s": 3.568014144897461,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:35:52",
+  "usage": {
+    "prompt_tokens": 905,
+    "completion_tokens": 117,
+    "reasoning_tokens": 104
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Six lines share this chart. At what minute does the temperature line (letter F) reach its highest point? Answers within +/-2 of the correct value are accepted.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/overlay_peak_minute_000.png"
+  }
+}

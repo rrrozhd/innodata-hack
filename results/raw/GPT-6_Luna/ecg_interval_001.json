@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_interval_001",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "6579ca8df848412f",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "The tall peak of beat 7 is about 12.3 large boxes from the tall peak of beat 13.\n\nFINAL ANSWER: 12.3",
+  "error": "",
+  "cost_usd": 0.0003186,
+  "latency_s": 7.1655237674713135,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:59:48",
+  "usage": {
+    "prompt_tokens": 701,
+    "completion_tokens": 497,
+    "reasoning_tokens": 459
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Measure on the grid (large box = 5 mm = 0.2 s) the distance from the tall peak of beat 7 to the tall peak of beat 13 (beats counted from the left, first beat = 1). How many large boxes is it? Answers within +/-0.5 of the correct value are accepted.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_interval_001.png"
+  }
+}

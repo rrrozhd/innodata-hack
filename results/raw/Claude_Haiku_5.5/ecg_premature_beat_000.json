@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_premature_beat_000",
+  "model_label": "Claude Haiku 5.5",
+  "model_id": "anthropic/claude-haiku-5.5",
+  "request_key": "237b6685b10d87ac",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "The wide, tall, early complex is beat 7.\n\nCounting the sharp QRS spikes from the left, the peaks fall at roughly x ≈ 190, 261, 334, 406, 480, 550, 593, 694, and so on. The first six are evenly spaced at about 70–74 px apart, which is the sinus-like baseline rhythm. The beat at x ≈ 593 comes only about 43 px after the sixth beat, so it is premature. It is also much taller and broader than the surrounding narrow complexes. It is followed by a longer pause (about 101 px) before the next beat, consistent with a premature ventricular contraction.\n\nFINAL ANSWER: 7",
+  "error": "",
+  "cost_usd": 0.0003186,
+  "latency_s": 2.7336008548736572,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:58:29",
+  "usage": {
+    "prompt_tokens": 801,
+    "completion_tokens": 477,
+    "reasoning_tokens": 254
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "One beat on this 10-second ECG rhythm strip arrives early and looks wider and taller than the others. Counting the QRS complexes from the left and starting at 1, which beat is it? Give a whole number.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_premature_beat_000.png"
+  }
+}

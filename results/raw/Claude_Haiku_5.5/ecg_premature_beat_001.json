@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_premature_beat_001",
+  "model_label": "Claude Haiku 5.5",
+  "model_id": "anthropic/claude-haiku-5.5",
+  "request_key": "8b151078fb53b529",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "The wide, tall complex at about x≈380 is the odd beat. Its peak reaches roughly twice the height of the neighbouring QRS complexes, and it is broader and more bizarre in shape.\n\nCounting the sharp QRS spikes from the left gives: 141 (1), 208 (2), 274 (3), 341 (4), 380 (5), 472 (6), and so on.\n\nThe beat at x≈380 comes only about 40 px after beat 4, while normal R-R intervals are about 65–67 px. It is followed by a longer gap to beat 6 at x≈472, a compensatory pause. This pattern, with an early wide premature beat and a pause, points to a premature ventricular complex.\n\nFINAL ANSWER: 5",
+  "error": "",
+  "cost_usd": 0.0004256,
+  "latency_s": 3.7578508853912354,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:58:50",
+  "usage": {
+    "prompt_tokens": 801,
+    "completion_tokens": 691,
+    "reasoning_tokens": 448
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "One beat on this 10-second ECG rhythm strip arrives early and looks wider and taller than the others. Counting the QRS complexes from the left and starting at 1, which beat is it? Give a whole number.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_premature_beat_001.png"
+  }
+}

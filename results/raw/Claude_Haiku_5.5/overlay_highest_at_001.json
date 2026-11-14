@@ -1,0 +1,26 @@
+{
+  "task_id": "overlay_highest_at_001",
+  "model_label": "Claude Haiku 5.5",
+  "model_id": "anthropic/claude-haiku-5.5",
+  "request_key": "9b024946fa15e59a",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "At minute 200, the green line (E, Diastolic blood pressure) peaks at about +5%. The other lines sit near 0% or below at that point: Heart rate (A), Oxygen saturation (B), Respiratory rate (C), Systolic blood pressure (D), and Temperature (F) are all under about +1%.\n\nFINAL ANSWER: E",
+  "error": "",
+  "cost_usd": 0.00019,
+  "latency_s": 1.4592130184173584,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:34:13",
+  "usage": {
+    "prompt_tokens": 1010,
+    "completion_tokens": 178,
+    "reasoning_tokens": 59
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Look at minute 200 on the shared chart. Which of the six lines has the largest value there? Reply with the letter A-F.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/overlay_highest_at_001.png"
+  }
+}

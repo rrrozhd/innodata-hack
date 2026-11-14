@@ -1,0 +1,26 @@
+{
+  "task_id": "overlay_highest_at_001",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "78ea7b5e5d8d8218",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "At minute 200, line E has the largest value.\n\nFINAL ANSWER: E",
+  "error": "",
+  "cost_usd": 0.000141,
+  "latency_s": 3.2861340045928955,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:39:28",
+  "usage": {
+    "prompt_tokens": 900,
+    "completion_tokens": 102,
+    "reasoning_tokens": 79
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Look at minute 200 on the shared chart. Which of the six lines has the largest value there? Reply with the letter A-F.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/overlay_highest_at_001.png"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_interval_000",
+  "model_label": "GPT-6 Luna",
+  "model_id": "openai/gpt-6-luna",
+  "request_key": "eee3ce1efd0b2fd8",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "The tall peak of beat 2 to the tall peak of beat 10 spans about 582 pixels. With 50 pixels per large box, that is about 11.6 large boxes.\n\nFINAL ANSWER: 11.6",
+  "error": "",
+  "cost_usd": 0.0003546,
+  "latency_s": 8.433939933776855,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:59:15",
+  "usage": {
+    "prompt_tokens": 701,
+    "completion_tokens": 569,
+    "reasoning_tokens": 516
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Measure on the grid (large box = 5 mm = 0.2 s) the distance from the tall peak of beat 2 to the tall peak of beat 10 (beats counted from the left, first beat = 1). How many large boxes is it? Answers within +/-0.5 of the correct value are accepted.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_interval_000.png"
+  }
+}

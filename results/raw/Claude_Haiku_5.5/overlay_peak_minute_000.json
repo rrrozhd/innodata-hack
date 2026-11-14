@@ -1,0 +1,26 @@
+{
+  "task_id": "overlay_peak_minute_000",
+  "model_label": "Claude Haiku 5.5",
+  "model_id": "anthropic/claude-haiku-5.5",
+  "request_key": "6f9f92a092c2fc72",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "The temperature line is **F**, the purple line. Its highest point is a peak at about +7.8% near the 154-minute mark, just before the 155-minute tick. The other purple peaks, near 165 and 178 minutes, sit lower at roughly +6.5% and +6.8%.\n\nFINAL ANSWER: 154",
+  "error": "",
+  "cost_usd": 0.000471,
+  "latency_s": 4.71539306640625,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:33:23",
+  "usage": {
+    "prompt_tokens": 1020,
+    "completion_tokens": 738,
+    "reasoning_tokens": 631
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Six lines share this chart. At what minute does the temperature line (letter F) reach its highest point? Answers within +/-2 of the correct value are accepted.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/overlay_peak_minute_000.png"
+  }
+}

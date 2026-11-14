@@ -1,0 +1,26 @@
+{
+  "task_id": "ecg_ectopic_count_000",
+  "model_label": "Claude Haiku 5.5",
+  "model_id": "anthropic/claude-haiku-5.5",
+  "request_key": "3a28e012e6927af1",
+  "status": "ok",
+  "finish_reason": "stop",
+  "text": "I found 4 wide, early beats. Each one arrives about 40 px after the preceding narrow beat, against a normal spacing of about 70 px, and each is broader and taller than the narrow QRS complexes. They sit at roughly x≈400, 680, 1166, and 1376, with no small bump before them.\n\nFINAL ANSWER: 4",
+  "error": "",
+  "cost_usd": 0.000484,
+  "latency_s": 4.707138776779175,
+  "attempts": 1,
+  "timestamp": "2026-11-14T14:58:23",
+  "usage": {
+    "prompt_tokens": 785,
+    "completion_tokens": 811,
+    "reasoning_tokens": 696
+  },
+  "request": {
+    "temperature": 0,
+    "reasoning_effort": "high",
+    "max_tokens": 16000,
+    "prompt_text": "Count the beats on this strip that come earlier than expected and look different from the rest (wider, taller, no preceding small bump). How many are there? Give a whole number.\n\nThink it through, then finish your reply with one final line in exactly this form:\nFINAL ANSWER: <your answer>",
+    "image": "tasks/images/ecg_ectopic_count_000.png"
+  }
+}

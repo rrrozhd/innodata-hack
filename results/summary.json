@@ -1,0 +1,105 @@
+{
+  "timestamp": "2026-11-14T14:59:59",
+  "per_model": {
+    "Claude Haiku 5.5": {
+      "responses": 10,
+      "valid": 10,
+      "invalid": 0,
+      "not_run": 0,
+      "correct": 10,
+      "accuracy": 1.0,
+      "prompt_tokens": 8098,
+      "completion_tokens": 7820,
+      "cost_usd": 0.0047198
+    },
+    "GPT-6 Luna": {
+      "responses": 10,
+      "valid": 10,
+      "invalid": 0,
+      "not_run": 0,
+      "correct": 9,
+      "accuracy": 0.9,
+      "prompt_tokens": 6832,
+      "completion_tokens": 3794,
+      "cost_usd": 0.0025802
+    }
+  },
+  "tasks": {
+    "ecg_beat_count_000": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_ectopic_count_000": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_interval_000": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "wrong"
+      },
+      "verdict": "split"
+    },
+    "ecg_premature_beat_000": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_rate_000": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_beat_count_001": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_ectopic_count_001": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_interval_001": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_premature_beat_001": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    },
+    "ecg_rate_001": {
+      "cells": {
+        "Claude Haiku 5.5": "ok",
+        "GPT-6 Luna": "ok"
+      },
+      "verdict": "both_pass"
+    }
+  },
+  "counts": {
+    "both_pass": 9,
+    "split": 1,
+    "both_fail": 0,
+    "incomplete": 0
+  }
+}
