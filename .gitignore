@@ -16,3 +16,6 @@ venv/
 
 # Notebooks
 .ipynb_checkpoints/
+
+# Submission zips
+dist/
