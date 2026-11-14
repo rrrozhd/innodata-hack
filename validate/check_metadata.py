@@ -21,7 +21,10 @@ def run(ctx: CheckContext) -> list[tuple[str, CheckResult]]:
                 else CheckResult.fail("question is empty", where="tasks/tasks.jsonl")))
 
     if t.answer_type == "number":
-        if t.tolerance is None or t.tolerance == 0:
+        if (t.tolerance is None or t.tolerance == 0) and getattr(ctx.generator, "exact_answer", False):
+            out.append(("tolerance_stated", CheckResult.ok(
+                "exact numeric answer (the generator declares exact_answer = True), so no tolerance is needed")))
+        elif t.tolerance is None or t.tolerance == 0:
             out.append(("tolerance_stated", CheckResult.warn(
                 "numeric answer with no tolerance: the model must match exactly. If the question "
                 "is a visual estimate, set `tolerance` on the generator (it is then stated in the prompt).")))

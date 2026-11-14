@@ -813,3 +813,779 @@ def _review_fix_checks(ui: UI, t: _Checker, ctx, rt, tmp: Path) -> None:
             and all((tmp / x.image_path).exists() for x in after_tasks),
             f"others before={others}")
 
+    _mermaid_checks(ui, t, rt, tmp)
+    _ownership_checks(ui, t, rt, tmp)
+    _vitals_checks(ui, t, rt, tmp)
+    _hard_vitals_checks(ui, t, rt, tmp)
+    _overlay_vitals_checks(ui, t, rt, tmp)
+    _ecg_checks(ui, t, rt, tmp)
+    _review_sheet_checks(ui, t, rt, tmp)
+
+
+_FAKE_MMDC = """#!{py}
+import sys, zlib, struct
+a = sys.argv
+import os
+if "fail" in os.path.basename(__file__):
+    sys.stderr.write("Error: Chromium could not start"); sys.exit(1)
+out = a[a.index("-o") + 1]
+def ch(k, p):
+    return struct.pack(">I", len(p)) + k + p + struct.pack(">I", zlib.crc32(k + p) & 0xffffffff)
+import hashlib
+raw = b"".join(b"\\x00" + hashlib.sha256(bytes([i])).digest() * 6 for i in range(64))
+open(out, "wb").write(b"\\x89PNG\\r\\n\\x1a\\n" + ch(b"IHDR", struct.pack(">IIBBBBB", 192, 64, 8, 0, 0, 0, 0))
+                      + ch(b"IDAT", zlib.compress(raw)) + ch(b"IEND", b""))
+# mode: {mode}
+"""
+
+
+def _mermaid_checks(ui: UI, t: _Checker, rt, tmp: Path) -> None:
+    """A fixed question + Mermaid source stored with each task (no real Mermaid install needed: a fake mmdc)."""
+    import io
+    import stat
+    from generate import mermaid as mm
+    from generate import new_generator
+    from generate.generate_tasks import generate_all
+    from generate.generators import _template_mermaid as tm
+    from generate.registry import Registry
+
+    _section(ui, "H. fixed question + Mermaid source")
+    work = Path(tempfile.mkdtemp(prefix="vtf_mermaid_"))
+    try:
+        def fake(mode: str) -> Path:
+            p = work / f"mmdc_{mode}"
+            p.write_text(_FAKE_MMDC.format(py=sys.executable, mode=mode), encoding="utf-8")
+            p.chmod(p.stat().st_mode | stat.S_IEXEC)
+            return p
+
+        old_env = os.environ.get("MMDC")
+        try:
+            os.environ["MMDC"] = str(work / "does_not_exist")
+            try:
+                mm.render_mermaid("flowchart TD\n A --> B", work / "x.png")
+                t.check("mermaid helper: a missing mmdc gives an install hint", False)
+            except RuntimeError as exc:
+                t.check("mermaid helper: a missing mmdc gives an install hint", "mermaid-cli" in str(exc))
+            os.environ["MMDC"] = str(fake("fail"))
+            try:
+                mm.render_mermaid("flowchart TD\n A --> B", work / "x.png")
+                t.check("mermaid helper: a failing mmdc raises with its error text", False)
+            except RuntimeError as exc:
+                t.check("mermaid helper: a failing mmdc raises with its error text", "Chromium could not start" in str(exc))
+            os.environ["MMDC"] = str(fake("ok"))
+            mm.render_mermaid("flowchart TD\n A --> B", work / "x.png")
+            t.check("mermaid helper: a working mmdc produces the image file",
+                    (work / "x.png").read_bytes()[:8] == b"\x89PNG\r\n\x1a\n")
+
+            class Live(tm.MyGenerator):
+                enabled = True
+                name = "selftest_mermaid"
+
+            class BadFixed(Live):
+                name = "selftest_bad_fixed"
+                question_template = "How many arrows lead out of {start}?"
+                fixed_question = True
+
+            class NoQuestion(Live):
+                name = "selftest_no_question"
+                question_template = None
+                make_question = TaskGenerator.make_question
+
+            class NoSource(Live):
+                name = "selftest_no_source"
+                source_key = "missing_key"
+
+            reg_bad = Registry()
+            reg_bad.add(BadFixed)
+            reg_bad.add(NoQuestion)
+            t.check("registry: fixed_question with {placeholders} is rejected; no question_template and no make_question is rejected",
+                    not reg_bad.generators and len(reg_bad.problems) == 2, str(reg_bad.problems))
+
+            for d in ("runner", "generate", "validate", "eval", "tasks", "results"):
+                (work / d).mkdir(exist_ok=True)
+            (work / "tasks" / "tasks.jsonl").write_text(json.dumps({"_placeholder": True, "task_id": "PLACEHOLDER"}) + "\n", encoding="utf-8")
+            (work / "results" / "run_config.json").write_text(json.dumps({"models": [], "temperature": 0}), encoding="utf-8")
+            cfg2 = Config.load(work, work / "results" / "run_config.json", overrides={"task_count_target": 4, "seed": 3})
+            reg = discover(extra=[Live], include_user=False)
+            ctx2 = RunContext(cfg=cfg2, out=ui, registry=reg, client=None, args=SimpleNamespace(
+                task=None, models=None, dry_run=True, text_only_baseline=False, force=False, generate=False,
+                ignore_preflight=False, count=None, generator=None, relaxed=False, strict=False, verbose=False))
+            with contextlib.redirect_stdout(io.StringIO()):
+                tasks2, report2 = generate_all(cfg2, ui, reg, count=4)
+            t.check("mermaid generator: 4 tasks written, every question identical, answers computed",
+                    len(tasks2) == 4 and len({x.question for x in tasks2}) == 1
+                    and all(isinstance(x.answer, int) and x.answer >= 1 for x in tasks2), str(report2["failures"]))
+            same = all((work / "tasks" / "source" / f"{x.id}.mmd").read_text(encoding="utf-8").rstrip("\n")
+                       == json.loads((work / x.data_path).read_text(encoding="utf-8"))["mermaid"] for x in tasks2)
+            t.check("mermaid source is stored in the data JSON AND as tasks/source/<id>.mmd (the two match)",
+                    bool(tasks2) and same)
+            with ui.quiet():
+                vres = validate_tasks(cfg2, ui, tasks2, reg, strict=False)
+            bad = [(i, n, r.message) for i, rs in vres.results.items() for n, r in rs
+                   if n in ("render_matches_data", "answer_recomputes", "data_reproducible") and r.status == "fail"]
+            t.check("validation: data reproducible, answer recomputes and the Mermaid source matches the data's edges",
+                    not bad and vres.count_status("render_matches_data", "pass") == 4, str(bad))
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                ctx2.args.dry_run = True
+                rt.run_selected_stages(ctx2, [3])
+            text = buf.getvalue()
+            t.check("variation: a declared fixed question is reported as by design, not as a near-identical warning",
+                    "by design" in text and "near-identical question text" not in text, text[-400:])
+            with contextlib.redirect_stdout(io.StringIO()):
+                tasks3, _ = generate_all(cfg2, ui, reg, count=4)
+            t.check("regenerating leaves exactly one source file per task (no stale ones)",
+                    sorted(p.stem for p in (work / "tasks" / "source").glob("*.mmd")) == sorted(x.id for x in tasks3))
+            reg2 = discover(extra=[NoSource], include_user=False)
+            with contextlib.redirect_stdout(io.StringIO()):
+                _, rep3 = generate_all(cfg2, ui, reg2, count=1)
+            t.check("a generator whose data lacks its source_key fails with a clear message",
+                    len(rep3["failures"]) == 1 and "missing_key" in rep3["failures"][0]["error"], str(rep3))
+        finally:
+            if old_env is None:
+                os.environ.pop("MMDC", None)
+            else:
+                os.environ["MMDC"] = old_env
+
+        gen_dir = work / "gens"
+        gen_dir.mkdir()
+        real_dir = Path(new_generator.__file__).resolve().parent / "generators"
+        for f in ("_template.py", "_template_mermaid.py"):
+            shutil.copy(real_dir / f, gen_dir / f)
+        saved = new_generator.GEN_DIR
+        new_generator.GEN_DIR = gen_dir
+        try:
+            dest = new_generator.create("my_flow", mermaid=True)
+            text = dest.read_text(encoding="utf-8")
+            t.check("new_generator --mermaid copies the Mermaid template and renames it",
+                    'name = "my_flow"' in text and "source_key" in text and "class MyFlowGenerator" in text)
+        finally:
+            new_generator.GEN_DIR = saved
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+
+def _audit_chart(chart: dict, level: int) -> list[str]:
+    """Check one ownership chart against the 20 rules, by a DIFFERENT method than the generator (routes are
+    enumerated one by one). Returns the list of broken rules (empty = all hold)."""
+    from fractions import Fraction as Fr
+    bad: list[str] = []
+    ents, edges, target = chart["entities"], chart["edges"], chart["target"]
+    kind = {e["id"]: e["kind"] for e in ents}
+    people = [i for i in kind if kind[i] == "person"]
+    companies = [i for i in kind if kind[i] == "company"]
+    out: dict[str, list[tuple[str, int]]] = {i: [] for i in kind}
+    inn: dict[str, list[tuple[str, int]]] = {i: [] for i in kind}
+    for e in edges:
+        out[e["owner"]].append((e["company"], e["percent"]))
+        inn[e["company"]].append((e["owner"], e["percent"]))
+    n = len(ents)
+    p = level
+    t = Fr(level - 1, 9)
+    if chart["level"] != level:
+        bad.append("20 level not recorded")
+    # structure 1-8
+    if [i for i in companies if not out[i]] != [target]:
+        bad.append("1 exactly one company (the target) owns nothing")
+    # routes down from every entity (a loop would recurse forever, so cap the depth)
+    def routes(node, prod=Fr(1), depth=0):
+        if depth > n:
+            raise RecursionError("loop")
+        if node == target:
+            yield prod
+            return
+        for nxt, pc in out[node]:
+            yield from routes(nxt, prod * Fr(pc, 100), depth + 1)
+    try:
+        per_person = {}
+        for i in kind:
+            rs = list(routes(i))
+            if not rs:
+                bad.append(f"3 {i} has no route to the target")
+            per_person[i] = rs
+    except RecursionError:
+        return bad + ["2 the arrows contain a loop"]
+    if len(people) != round(0.4 * n):
+        bad.append("5 people are not 40% of entities")
+    if any(inn[i] for i in people):
+        bad.append("6 an arrow points into a person")
+    if any(not out[i] for i in people):
+        bad.append("7 a person owns nothing")
+    if any(not (1 <= len(inn[c]) <= 4) for c in companies):
+        bad.append("7 a company has <1 or >4 owners")
+    if any(len({o for o, _ in inn[c]}) != len(inn[c]) for c in companies):
+        bad.append("8 two arrows between one owner and one company")
+    # numbers 9-11
+    if any(e["percent"] % 5 or not 5 <= e["percent"] <= 100 for e in edges):
+        bad.append("9 a stake is not a whole 5% step in 5..100")
+    if any(sum(pc for _, pc in inn[c]) != 100 for c in companies):
+        bad.append("10 stakes into a company do not add to 100")
+    eff = {i: sum(per_person[i]) * 100 for i in people}
+    if sum(eff.values()) != 100:
+        bad.append("11 people's effective stakes do not add to 100")
+    # answer 12-15
+    above = [v for v in eff.values() if v >= 25]
+    below = [v for v in eff.values() if v < 25]
+    if not above or not below:
+        bad.append("12 need someone at/above and someone below 25%")
+    if any(abs(v - 25) <= 2 for v in eff.values()):
+        bad.append("13 someone is within 2 points of 25%")
+    answer = len(above)
+    route_set = {i for i in people if max(per_person[i]) * 100 >= 25}
+    arrow_set = {i for i in people if any(pc >= 25 for _, pc in out[i])}
+    for name, sset in (("biggest single route", route_set), ("any arrow", arrow_set)):
+        if len(sset) == answer or sset == {i for i in people if eff[i] >= 25}:
+            bad.append(f"14 the '{name}' shortcut gives the right answer")
+    gap = 40 - t * 35
+    if above and below and (min(v - 25 for v in above) > gap or min(25 - v for v in below) > gap):
+        bad.append("15 nearest owner on a side is farther than the level's gap")
+    # level dial 16
+    if n != round(8 + t * 14):
+        bad.append("16 wrong entity count for the level")
+    # names 17
+    names = [e["name"] for e in ents]
+    if len({x.lower() for x in names}) != len(names):
+        bad.append("17 duplicate names")
+    endings = {"Holdings", "Capital", "Group", "Partners", "Ventures", "Trust", "Industries", "Enterprises", "Investments", "Associates"}
+    for e in ents:
+        words = e["name"].split()
+        if e["kind"] == "person" and (len(words) != 2 or not all(w.isalpha() for w in words)):
+            bad.append("17 a person is not two made-up words")
+        if e["kind"] == "company" and (len(words) != 2 or words[1] not in endings or not words[0].isalpha()):
+            bad.append("17 a company is not a word plus one of the ten endings")
+    # picture text 18-20
+    src = chart["mermaid"]
+    lines = src.splitlines()
+    if not (lines[0].startswith("%%{init:") and lines[0].endswith("}%%")):
+        bad.append("20 the init directive is not wrapped in %%{ ... }%%")
+    if '"fontSize": "16px"' not in lines[0] or '"useMaxWidth": false' not in lines[0]:
+        bad.append("19 labels are not fixed at 16px / scaling is not off")
+    if "flowchart TB" not in lines:
+        bad.append("18 layout is not top-down")
+    if f"%% level: {level}" not in lines or f"%% seed: {chart['seed']}" not in lines:
+        bad.append("20 level and seed are not written into the .mmd")
+    for e in ents:
+        shape = f'{e["id"]}(["{e["name"]}"])' if e["kind"] == "person" else f'{e["id"]}["{e["name"]}"]'
+        if f"    {shape}" not in lines:
+            bad.append(f"18 {e['id']} is not drawn as a {'pill' if e['kind'] == 'person' else 'rectangle'}")
+    for e in edges:
+        if f'    {e["owner"]} -->|{e["percent"]}%| {e["company"]}' not in lines:
+            bad.append("18 an arrow has no percent label")
+    return bad
+
+
+def _walked_answer(chart: dict) -> int:
+    """How many people hold 25%+ of the target, found by walking down every route (no shared code with the generator)."""
+    from fractions import Fraction as Fr
+    out: dict[str, list[tuple[str, int]]] = {}
+    for e in chart["edges"]:
+        out.setdefault(e["owner"], []).append((e["company"], e["percent"]))
+
+    def walk(node: str, prod: Fr):
+        if node == chart["target"]:
+            yield prod
+        for nxt, pc in out.get(node, []):
+            yield from walk(nxt, prod * Fr(pc, 100))
+
+    return sum(1 for e in chart["entities"] if e["kind"] == "person" and sum(walk(e["id"], Fr(1))) * 100 >= 25)
+
+
+def _ownership_checks(ui: UI, t: _Checker, rt, tmp: Path) -> None:
+    """The ownership-chart generator against the 20 rules, at every level, over many seeds."""
+    import io
+    from generate.generators import ownership_chart as oc
+
+    _section(ui, "I. ownership chart: the 20 rules")
+    broken: list[str] = []
+    counts: set[int] = set()
+    for level in range(1, 11):
+        for k in range(12):
+            chart = oc.make_chart(level, 1000 * level + 97 * k, fits=lambda s: True)
+            problems = _audit_chart(chart, level)
+            broken += [f"level {level} seed {chart['seed']}: {x}" for x in problems]
+            counts.add(oc.beneficial_owner_count(chart))
+    t.check("120 charts (12 per level, levels 1-10) satisfy all 20 rules, checked by independent route enumeration",
+            not broken, "; ".join(broken[:4]))
+    t.check("the answers vary across charts (not always the same number)", len(counts) >= 3, str(sorted(counts)))
+    first = oc.make_chart(7, 4242, fits=lambda s: True)
+    again = oc.build_chart(7, first["seed"])
+    t.check("the same level and seed always rebuild the identical chart [20]", again == first)
+    t.check("compute_answer() equals the answer found by walking every route one by one",
+            all(oc.OwnershipChartGenerator().compute_answer(c) == _walked_answer(c)
+                for c in (oc.make_chart(lv, 31 * lv, fits=lambda s: True) for lv in range(1, 11))))
+
+    # a picture that does not fit is redrawn from the NEXT seed [19]
+    calls = {"n": 0}
+
+    def too_big_twice(src: str) -> bool:
+        calls["n"] += 1
+        return calls["n"] > 2
+
+    redrawn = oc.make_chart(3, 777, fits=too_big_twice)
+    structural = [s for s in range(777, 777 + 200) if oc.build_chart(3, s) is not None]
+    t.check("an oversized picture is rejected and the chart is redrawn from the next valid seed [19]",
+            redrawn["seed"] == structural[2] and calls["n"] == 3, f"{redrawn['seed']} vs {structural[:3]}")
+
+    # the generator class: registered, fixed question, verify_render catches a tampered source
+    gen = oc.OwnershipChartGenerator()
+    class _LiveOwnership(type(gen)):
+        enabled = True
+
+    reg = discover(extra=[_LiveOwnership], include_user=False)
+    t.check("ownership_chart is registered with its fixed question and exact answer",
+            "ownership_chart" in reg.generators and gen.fixed_question and gen.exact_answer
+            and "{" not in gen.question_template)
+    png = tmp / "own.png"
+    import stat
+    fake = tmp / "mmdc_own"
+    fake.write_text(_FAKE_MMDC.format(py=sys.executable, mode="ok"), encoding="utf-8")
+    fake.chmod(fake.stat().st_mode | stat.S_IEXEC)
+    old = os.environ.get("MMDC")
+    os.environ["MMDC"] = str(fake)
+    try:
+        gen.render(first, png)
+        good = gen.verify_render(first, png)
+        tampered = dict(first, mermaid=first["mermaid"].replace("-->|", "-->|9", 1))
+        bad_text = gen.verify_render(tampered, png)
+        small = gen.picture_fits(first["mermaid"])
+    finally:
+        if old is None:
+            os.environ.pop("MMDC", None)
+        else:
+            os.environ["MMDC"] = old
+    t.check("verify_render passes a matching chart and fails a tampered Mermaid source",
+            good.status == "pass" and bad_text.status == "fail", f"{good.message} | {bad_text.message}")
+    t.check("picture_fits measures the PNG size (the stand-in draws 192x64, which fits)", small is True)
+
+
+def _vitals_checks(ui: UI, t: _Checker, rt, tmp: Path) -> None:
+    """Synthetic patient-monitoring charts: data rules, picture-vs-data pixels, and answers recomputed independently."""
+    import io
+    from PIL import Image
+    from generate.generate_tasks import generate_all
+    from generate.generators import _vitals as vt
+    from generate.generators.vitals_final_value import VitalsFinalValueGenerator
+    from generate.generators.vitals_first_change import VitalsFirstChangeGenerator
+    from generate.generators.vitals_onset import VitalsOnsetGenerator
+    from generate.generators.vitals_threshold import VitalsThresholdGenerator
+
+    _section(ui, "J. synthetic patient-monitoring charts")
+    # --- determinism
+    a = vt.build_patient(random.Random(5), 4)
+    b = vt.build_patient(random.Random(5), 4)
+    c = vt.build_patient(random.Random(6), 4)
+    t.check("the same seed gives the identical patient data; another seed gives different data", a == b and a != c)
+
+    # --- data rules at every level
+    problems: list[str] = []
+    for level in range(1, 11):
+        for k in range(8):
+            d = vt.build_patient(random.Random(100 * level + k), level)
+            n, step, dur = len(d["panels"]), d["time_step"], d["duration"]
+            want_panels = 2 if level <= 3 else 3 if level <= 7 else 4
+            if n != want_panels:
+                problems.append(f"L{level}: {n} panels, expected {want_panels}")
+            if d["times"] != list(range(0, dur + 1, step)):
+                problems.append(f"L{level}: bad time grid")
+            if len({p["key"] for p in d["panels"]}) != n:
+                problems.append(f"L{level}: a variable appears twice")
+            for p in d["panels"]:
+                vals = p["values"]
+                if len(vals) != len(d["times"]) or vals[0] is None or vals[-1] is None:
+                    problems.append(f"L{level}: first/last reading missing or wrong length")
+                if level <= 2 and any(v is None for v in vals):
+                    problems.append(f"L{level}: missing readings at an easy level")
+                bound = vt.noise_bound(p, d["noise_mult"])
+                for tm, v in zip(d["times"], vals):
+                    if v is not None and abs(v - vt.clean_value(p, tm)) > bound + p["quantum"] + 1e-9:
+                        problems.append(f"L{level}: reading off its clean curve by more than the noise bound")
+                        break
+                if p["trend"] == "flat" and p["onset"] is not None:
+                    problems.append("flat panel has an onset")
+                if p["trend"] != "flat":
+                    if p["onset"] % step or not 0 < p["onset"] < dur:
+                        problems.append(f"L{level}: onset not on the time grid")
+                    if abs(p["delta"]) < 8 * bound / 2.5:
+                        problems.append(f"L{level}: trend too small to see against the noise")
+                if any(v is not None and not p["y_min"] <= v <= p["y_max"] for v in vals):
+                    problems.append(f"L{level}: a reading is outside the axis")
+    t.check("80 patients (8 per level, levels 1-10): panel count, time grid, noise bound, onsets and axes obey the rules",
+            not problems, "; ".join(problems[:3]))
+
+    # --- picture matches the data (pixels), and a tampered picture / tampered data is caught
+    d = vt.build_patient(random.Random(11), 9)  # a level with 4 panels and missing readings
+    png = tmp / "vitals.png"
+    vt.render_png(d, png)
+    ok = vt.verify_png(d, png)
+    t.check("the picture matches the data when its pixels are re-measured (readings on the line, missing ones as gaps)",
+            ok.status == "pass", ok.message)
+    img = Image.open(png).convert("RGB")
+    box = vt.layout(d)["panels"][0]
+    for x in range(box["x0"] + 5, box["x1"] - 5):  # paint over panel A's plot area with white
+        for y in range(box["y0"] + 1, box["y1"] - 1):
+            img.putpixel((x, y), (255, 255, 255))
+    bad_png = tmp / "vitals_bad.png"
+    img.save(bad_png)
+    t.check("verify_png fails when a panel's line has been erased from the picture",
+            vt.verify_png(d, bad_png).status == "fail")
+    moved = copy.deepcopy(d)
+    j = next(i for i, v in enumerate(moved["panels"][0]["values"]) if v is not None and 3 < i < len(moved["times"]) - 3)
+    moved["panels"][0]["values"][j] += (moved["panels"][0]["y_max"] - moved["panels"][0]["y_min"]) / 3
+    t.check("verify_png fails when one reading in the data no longer matches the picture",
+            vt.verify_png(moved, png).status == "fail")
+    vt.render_png(d, tmp / "v2.png")
+    t.check("the picture is deterministic (rendering twice gives identical bytes)",
+            (tmp / "v2.png").read_bytes() == png.read_bytes())
+
+    # --- the four generators, end to end in a temp folder
+    work = Path(tempfile.mkdtemp(prefix="vtf_vitals_"))
+    try:
+        for dname in ("runner", "generate", "validate", "eval", "tasks", "results"):
+            (work / dname).mkdir()
+        (work / "tasks" / "tasks.jsonl").write_text(json.dumps({"_placeholder": True, "task_id": "PLACEHOLDER"}) + "\n", encoding="utf-8")
+        (work / "results" / "run_config.json").write_text(json.dumps({"models": [], "temperature": 0}), encoding="utf-8")
+        cfg3 = Config.load(work, work / "results" / "run_config.json", overrides={"seed": 21})
+        classes = [type(c.__name__, (c,), {"enabled": True})
+                   for c in (VitalsOnsetGenerator, VitalsFinalValueGenerator, VitalsThresholdGenerator,
+                             VitalsFirstChangeGenerator)]
+        reg3 = discover(extra=classes, include_user=False)
+        t.check("all four vitals generators register (examples cited, required methods filled)",
+                len(reg3.generators) == 4 and not reg3.problems, str(reg3.problems))
+        with contextlib.redirect_stdout(io.StringIO()):
+            tasks3, rep3 = generate_all(cfg3, ui, reg3, count=20)
+        t.check("20 tasks (5 per generator) are generated with no failures", len(tasks3) == 20 and not rep3["failures"],
+                str(rep3["failures"][:2]))
+        levels = sorted({json.loads((work / x.data_path).read_text(encoding="utf-8"))["level"] for x in tasks3})
+        t.check("the tasks spread over many difficulty levels (not only the easy ones)", len(levels) >= 6, str(levels))
+        wrong = []
+        for x in tasks3:
+            dd = json.loads((work / x.data_path).read_text(encoding="utf-8"))
+            tgt = dd.get("target")
+            if x.generator == "vitals_onset":
+                want = dd["panels"][tgt]["onset"]
+            elif x.generator == "vitals_final_value":
+                want = [v for v in dd["panels"][tgt]["values"] if v is not None][-1]
+            elif x.generator == "vitals_threshold":
+                p = dd["panels"][tgt]
+                up = p["delta"] > 0
+                want = next(tm for tm, v in zip(dd["times"], p["values"])
+                            if v is not None and (v > dd["threshold"] if up else v < dd["threshold"]))
+            else:
+                want = min((p["onset"], p["letter"]) for p in dd["panels"] if p["trend"] != "flat")[1]
+            if str(x.answer) != str(want) and not (isinstance(want, float) and abs(float(x.answer) - want) < 1e-9):
+                wrong.append((x.id, x.answer, want))
+        t.check("every stored answer equals the answer found by re-reading the saved data independently",
+                not wrong, str(wrong[:3]))
+        with ui.quiet():
+            vres = validate_tasks(cfg3, ui, tasks3, reg3, strict=False)
+        fails = [(i, n, r.message) for i, rs in vres.results.items() for n, r in rs if r.status == "fail"]
+        t.check("validation: no check fails on any of the 20 tasks (data, picture-vs-data, answer, needs-image)",
+                not fails and vres.count_status("render_matches_data", "pass") == 20, str(fails[:2]))
+        numeric = [x for x in tasks3 if x.answer_type == "number"]
+        t.check("numeric tasks carry their own tolerance and the question states it",
+                all(x.tolerance and f"{x.tolerance:g}" in x.question for x in numeric) and len(numeric) == 15)
+        fc = [x for x in tasks3 if x.generator == "vitals_first_change"]
+        t.check("the first-change tasks have a letter answer that matches a panel, with one fixed question",
+                all(x.answer in ("A", "B", "C", "D") for x in fc) and len({x.question for x in fc}) == 1)
+        t.check("the questions are not all the same wording within a generator (phrasing varies)",
+                len({x.question for x in tasks3 if x.generator == "vitals_onset"}) >= 2)
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def _hard_vitals_checks(ui: UI, t: _Checker, rt, tmp: Path) -> None:
+    """HARD vitals tasks: gap count, crossing count, exact reading. Answers recomputed by separate code."""
+    from generate.generate_tasks import generate_all
+    from generate.generators import _vitals as vt
+    from generate.generators.vitals_crossing_count import VitalsCrossingCountGenerator
+    from generate.generators.vitals_exact_reading import VitalsExactReadingGenerator
+    from generate.generators.vitals_gap_count import VitalsGapCountGenerator
+    from generate.generators.vitals_final_value import VitalsFinalValueGenerator
+    from generate.generators.vitals_first_change import VitalsFirstChangeGenerator
+    from generate.generators.vitals_onset import VitalsOnsetGenerator
+    from generate.generators.vitals_threshold import VitalsThresholdGenerator
+
+    _section(ui, "K. hard vitals tasks (count the gaps, count the crossings, read an exact value)")
+    work = Path(tempfile.mkdtemp(prefix="vtf_hard_"))
+    try:
+        for dname in ("runner", "generate", "validate", "eval", "tasks", "results"):
+            (work / dname).mkdir()
+        (work / "tasks" / "tasks.jsonl").write_text(json.dumps({"_placeholder": True, "task_id": "PLACEHOLDER"}) + "\n", encoding="utf-8")
+        (work / "results" / "run_config.json").write_text(json.dumps({"models": [], "temperature": 0}), encoding="utf-8")
+        cfg = Config.load(work, work / "results" / "run_config.json", overrides={"seed": 33})
+        reg = discover(extra=[type(c.__name__, (c,), {"enabled": True}) for c in (VitalsGapCountGenerator, VitalsCrossingCountGenerator, VitalsExactReadingGenerator)], include_user=False)
+        t.check("the three hard generators register when enabled (examples cited, methods filled)",
+                {"vitals_gap_count", "vitals_crossing_count", "vitals_exact_reading"} <= set(reg.generators) and not reg.problems,
+                str(reg.problems))
+        t.check("the vitals and overlay generators are all switched off by default (the live tasks are the ECG strips)",
+                not any(c.enabled for c in (VitalsGapCountGenerator, VitalsCrossingCountGenerator, VitalsExactReadingGenerator,
+                                            VitalsOnsetGenerator, VitalsFinalValueGenerator, VitalsThresholdGenerator,
+                                            VitalsFirstChangeGenerator)))
+        with contextlib.redirect_stdout(io.StringIO()):
+            tasks, rep = generate_all(cfg, ui, reg, count=12)
+        t.check("12 hard tasks (4 per generator) are generated with no failures", len(tasks) == 12 and not rep["failures"],
+                str(rep["failures"][:2]))
+        wrong, notes = [], []
+        for x in tasks:
+            d = json.loads((work / x.data_path).read_text(encoding="utf-8"))
+            p = d["panels"][d["target"]]
+            vals = p["values"]
+            if x.generator == "vitals_gap_count":
+                runs = 0
+                for i, v in enumerate(vals):
+                    if v is None and (i == 0 or vals[i - 1] is not None):
+                        runs += 1
+                want = runs
+                if not 9 <= runs <= 20 or len(d["times"]) < 91 or len(d["panels"]) != 5:
+                    notes.append(f"{x.id}: gap task out of range ({runs} gaps, {len(d['times'])} readings)")
+            elif x.generator == "vitals_crossing_count":
+                ref = d["ref"]["value"]
+                want = 0
+                pres = [v for v in vals if v is not None]
+                for a, b in zip(pres, pres[1:]):
+                    if (a - ref) * (b - ref) < 0:
+                        want += 1
+                box = vt.layout(d)["panels"][d["target"]]
+                gap_px = min(abs(v - ref) for v in pres) * (box["y1"] - box["y0"]) / (p["y_max"] - p["y_min"])
+                if None in vals or gap_px < 3 or not 8 <= want <= 22 or p["trend"] != "flat":
+                    notes.append(f"{x.id}: crossing task breaks its rules (min {gap_px:.1f}px, {want} crossings)")
+            else:
+                want = vals[d["times"].index(d["minute"])]
+                if want is None or d["minute"] not in vt._x_ticks(d["duration"]):
+                    notes.append(f"{x.id}: reading task asks about an unlabelled or missing minute")
+                if x.tolerance != p["quantum"]:
+                    notes.append(f"{x.id}: tolerance {x.tolerance} is not one unit ({p['quantum']})")
+            if abs(float(x.answer) - float(want)) > 1e-9:
+                wrong.append((x.id, x.answer, want))
+        t.check("every stored answer equals the answer re-counted / re-read from the saved data by separate code",
+                not wrong, str(wrong[:3]))
+        t.check("each task obeys its own rules (ranges, gaps, 3-pixel clearance, labelled minute, one-unit tolerance)",
+                not notes, "; ".join(notes[:3]))
+        with ui.quiet():
+            vres = validate_tasks(cfg, ui, tasks, reg, strict=False)
+        fails = [(i, n, r.message) for i, rs in vres.results.items() for n, r in rs if r.status == "fail"]
+        t.check("validation: no check fails and every picture matches its data (including the dashed line)",
+                not fails and vres.count_status("render_matches_data", "pass") == 12, str(fails[:2]))
+        cx = next(x for x in tasks if x.generator == "vitals_crossing_count")
+        d = json.loads((work / cx.data_path).read_text(encoding="utf-8"))
+        d2 = json.loads(json.dumps(d))
+        d2["ref"]["value"] = round(d2["ref"]["value"] + 0.5 * (d2["panels"][d2["ref"]["panel"]]["y_max"] - d2["panels"][d2["ref"]["panel"]]["y_min"]) / 4, 3)
+        res = vt.verify_png(d2, work / cx.image_path)
+        t.check("verify_png fails when the dashed reference line is not where the data says",
+                res.status == "fail", res.message)
+        g1 = VitalsGapCountGenerator()
+        a1 = g1.generate_data(random.Random(9), 1)
+        b1 = g1.generate_data(random.Random(9), 1)
+        t.check("hard patients are deterministic (same seed, same data and answer)",
+                a1 == b1 and g1.compute_answer(a1) == g1.compute_answer(b1))
+        t.check("every hard task is level 8-10 (the generators never produce an easy chart)",
+                all(8 <= json.loads((work / x.data_path).read_text(encoding="utf-8"))["level"] <= 10 for x in tasks))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def _overlay_vitals_checks(ui: UI, t: _Checker, rt, tmp: Path) -> None:
+    """OVERLAY vitals tasks: six lines on one axis. Answers recomputed by separate code."""
+    from generate.generate_tasks import generate_all
+    from generate.generators import _overlay as ov
+    from generate.generators.overlay_cross_count import OverlayCrossCountGenerator
+    from generate.generators.overlay_highest_at import OverlayHighestAtGenerator
+    from generate.generators.overlay_peak_minute import OverlayPeakMinuteGenerator
+
+    _section(ui, "L. overlay vitals tasks (six overlapping lines on one chart)")
+    work = Path(tempfile.mkdtemp(prefix="vtf_overlay_"))
+    try:
+        for dname in ("runner", "generate", "validate", "eval", "tasks", "results"):
+            (work / dname).mkdir()
+        (work / "tasks" / "tasks.jsonl").write_text(json.dumps({"_placeholder": True, "task_id": "PLACEHOLDER"}) + "\n", encoding="utf-8")
+        (work / "results" / "run_config.json").write_text(json.dumps({"models": [], "temperature": 0}), encoding="utf-8")
+        cfg = Config.load(work, work / "results" / "run_config.json", overrides={"seed": 77})
+        reg = discover(extra=[type(c.__name__, (c,), {"enabled": True}) for c in (OverlayCrossCountGenerator, OverlayHighestAtGenerator, OverlayPeakMinuteGenerator)], include_user=False)
+        t.check("the three overlay generators register when enabled (examples cited, methods filled)",
+                {"overlay_cross_count", "overlay_highest_at", "overlay_peak_minute"} <= set(reg.generators) and not reg.problems,
+                str(reg.problems))
+        with contextlib.redirect_stdout(io.StringIO()):
+            tasks, rep = generate_all(cfg, ui, reg, count=12)
+        t.check("12 overlay tasks (4 per generator) are generated with no failures", len(tasks) == 12 and not rep["failures"],
+                str(rep["failures"][:2]))
+        wrong, notes = [], []
+        for x in tasks:
+            d = json.loads((work / x.data_path).read_text(encoding="utf-8"))
+            if len(d["series"]) != 6 or len(d["times"]) < 91:
+                notes.append(f"{x.id}: not 6 series x 91+ readings")
+            if x.generator == "overlay_cross_count":
+                a, b = (d["series"][k]["values"] for k in d["pair"])
+                diffs = [p - q for p, q in zip(a[1:], b[1:])]
+                want = sum(1 for p, q in zip(diffs, diffs[1:]) if p * q < 0)
+                if 0 in diffs or not 8 <= want <= 22:
+                    notes.append(f"{x.id}: cross task breaks its rules ({want} crossings, tie={0 in diffs})")
+            elif x.generator == "overlay_highest_at":
+                i = d["times"].index(d["minute"])
+                col = sorted(((s["values"][i], s["letter"]) for s in d["series"]), reverse=True)
+                want = col[0][1]
+                if col[0][0] - col[1][0] < 0.7 or d["minute"] not in ov.x_ticks(d["duration"]):
+                    notes.append(f"{x.id}: highest-at task is a photo finish or an unlabelled minute")
+            else:
+                vals = d["series"][d["target"]]["values"]
+                srt = sorted(vals, reverse=True)
+                want = d["times"][vals.index(srt[0])]
+                if srt[0] - srt[1] < 0.8 or vals.index(srt[0]) in (0, len(vals) - 1) or x.tolerance != d["time_step"]:
+                    notes.append(f"{x.id}: peak task breaks its rules")
+            if str(x.answer) != str(want) and not (isinstance(want, int) and abs(float(x.answer) - want) < 1e-9):
+                wrong.append((x.id, x.answer, want))
+        t.check("every stored answer equals the answer re-counted / re-read from the saved data by separate code",
+                not wrong, str(wrong[:3]))
+        t.check("each task obeys its own rules (6 series, 91+ readings, no ties or photo finishes, one-interval tolerance)",
+                not notes, "; ".join(notes[:3]))
+        with ui.quiet():
+            vres = validate_tasks(cfg, ui, tasks, reg, strict=False)
+        fails = [(i, n, r.message) for i, rs in vres.results.items() for n, r in rs if r.status == "fail"]
+        t.check("validation: no check fails and every picture matches its data",
+                not fails and vres.count_status("render_matches_data", "pass") == 12, str(fails[:2]))
+        first = tasks[0]
+        d = json.loads((work / first.data_path).read_text(encoding="utf-8"))
+        d["series"][2]["values"][5] = round(d["series"][2]["values"][5] + 3.0, 1)
+        res = ov.verify_png(d, work / first.image_path)
+        t.check("verify_png fails when one reading in the data no longer matches the picture",
+                res.status == "fail", res.message)
+        g = OverlayCrossCountGenerator()
+        a1, b1 = g.generate_data(random.Random(4), 0), g.generate_data(random.Random(4), 0)
+        t.check("overlay charts are deterministic (same seed, same data and answer)",
+                a1 == b1 and g.compute_answer(a1) == g.compute_answer(b1))
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def _ecg_checks(ui: UI, t: _Checker, rt, tmp: Path) -> None:
+    """ECG rhythm strips: the picture is the data, and every answer is re-derived from the raw samples by separate code."""
+    from generate.generate_tasks import generate_all
+    from generate.generators import _ecg as ec
+    from generate.generators.ecg_beat_count import EcgBeatCountGenerator
+    from generate.generators.ecg_ectopic_count import EcgEctopicCountGenerator
+    from generate.generators.ecg_interval import EcgIntervalGenerator
+    from generate.generators.ecg_premature_beat import EcgPrematureBeatGenerator
+    from generate.generators.ecg_rate import EcgRateGenerator
+
+    _section(ui, "M. synthetic ECG rhythm strips")
+    a = ec.build_strip(random.Random(5), "pvc", 70)
+    b = ec.build_strip(random.Random(5), "pvc", 70)
+    t.check("the same seed gives identical strip data; another seed gives different data",
+            a == b and a != ec.build_strip(random.Random(6), "pvc", 70))
+    work = Path(tempfile.mkdtemp(prefix="vtf_ecg_"))
+    try:
+        for dname in ("runner", "generate", "validate", "eval", "tasks", "results"):
+            (work / dname).mkdir()
+        (work / "tasks" / "tasks.jsonl").write_text(json.dumps({"_placeholder": True, "task_id": "PLACEHOLDER"}) + "\n", encoding="utf-8")
+        (work / "results" / "run_config.json").write_text(json.dumps({"models": [], "temperature": 0}), encoding="utf-8")
+        cfg = Config.load(work, work / "results" / "run_config.json", overrides={"seed": 91})
+        classes = [EcgBeatCountGenerator, EcgRateGenerator, EcgPrematureBeatGenerator, EcgIntervalGenerator, EcgEctopicCountGenerator]
+        reg = discover(extra=classes, include_user=False)
+        t.check("all five ECG generators register by default (examples cited, methods filled)",
+                {"ecg_beat_count", "ecg_rate", "ecg_premature_beat", "ecg_interval", "ecg_ectopic_count"} <= set(reg.generators) and not reg.problems,
+                str(reg.problems))
+        with contextlib.redirect_stdout(io.StringIO()):
+            tasks, rep = generate_all(cfg, ui, reg, count=20)
+        t.check("20 ECG tasks (4 per generator) are generated with no failures", len(tasks) == 20 and not rep["failures"],
+                str(rep["failures"][:2]))
+        wrong, notes = [], []
+        for x in tasks:
+            d = json.loads((work / x.data_path).read_text(encoding="utf-8"))
+            fs = d["fs"]
+            peaks = ec.find_beats(d["samples"], d["amp"])  # separate beat finder, from the raw samples only
+            stored = [bt["i"] for bt in d["beats"]]
+            if len(peaks) != len(stored) or any(abs(p - q) > ec.APEX_SLACK for p, q in zip(peaks, stored)):  # apex may sit a sample or two off the centre
+                notes.append(f"{x.id}: beat finder disagrees with the stored beats")
+            if peaks[0] < 0.4 * fs or peaks[-1] > len(d["samples"]) - 0.4 * fs:
+                notes.append(f"{x.id}: a beat is too close to the strip edge")
+            gaps = [q - p for p, q in zip(peaks, peaks[1:])]
+            if x.generator == "ecg_beat_count":
+                want = len(peaks)
+            elif x.generator == "ecg_rate":
+                want = round(60 * fs / (sum(gaps) / len(gaps)))
+                sg = [q - p for p, q in zip(stored, stored[1:])]
+                if max(sg) - min(sg) > 2:  # the stored beat spacing is steady to within one sample of jitter
+                    notes.append(f"{x.id}: rate strip is not steady")
+            elif x.generator in ("ecg_premature_beat", "ecg_ectopic_count"):
+                med = sorted(gaps)[len(gaps) // 2]
+                early = [k + 2 for k, g in enumerate(gaps) if g < 0.75 * med]
+                if x.generator == "ecg_premature_beat":
+                    if len(early) != 1:
+                        notes.append(f"{x.id}: expected exactly one early beat, found {len(early)}")
+                    want = early[0] if early else None
+                else:
+                    if not 3 <= len(early) <= 5 or any(q - p == 1 for p, q in zip(early, early[1:])):
+                        notes.append(f"{x.id}: expected 3-5 separate early beats, found {early}")
+                    want = len(early)
+            else:
+                a_, b_ = d["pair"]
+                want = round((peaks[b_ - 1] - peaks[a_ - 1]) / fs / 0.2, 2)
+                if x.tolerance != 0.5 or not 5 <= b_ - a_ <= 8 or len(peaks) < 18:
+                    notes.append(f"{x.id}: interval task should span 5-8 beats on 18+ beats with 0.5-box tolerance")
+            slack = 0.25 if x.generator == "ecg_interval" else (4 if x.generator == "ecg_rate" else 1e-9)  # apex vs centre: up to 6 samples each end
+            if want is None or abs(float(x.answer) - float(want)) > slack:
+                wrong.append((x.id, x.answer, want))
+        t.check("every stored answer equals the answer re-derived from the raw samples by separate code (within the apex-vs-centre slack)", not wrong, str(wrong[:3]))
+        t.check("each strip obeys its rules (beats found again, none at the edge, steady rate strips, one early beat)",
+                not notes, "; ".join(notes[:3]))
+        with ui.quiet():
+            vres = validate_tasks(cfg, ui, tasks, reg, strict=False)
+        fails = [(i, n, r.message) for i, rs in vres.results.items() for n, r in rs if r.status == "fail"]
+        t.check("validation: no check fails and every picture matches its data",
+                not fails and vres.count_status("render_matches_data", "pass") == 20, str(fails[:2]))
+        first = tasks[0]
+        d = json.loads((work / first.data_path).read_text(encoding="utf-8"))
+        bi = d["beats"][2]["i"]
+        d["samples"][bi] = round(d["samples"][bi] - 1.0, 3)
+        res = ec.verify_png(d, work / first.image_path)
+        t.check("verify_png fails when a beat's peak in the data no longer matches the picture", res.status == "fail", res.message)
+        blank = tmp / "ecg_grid_wrong.png"
+        from PIL import Image
+        Image.new("RGB", (ec.WIDTH, ec.HEIGHT), (255, 255, 255)).save(blank)
+        t.check("verify_png fails on a picture without the grid", ec.verify_png(d, blank).status == "fail")
+        t.check("the question texts never ask for a diagnosis (no 'rhythm is', 'diagnos', 'abnormal', 'disease')",
+                not any(w in x.question.lower() for x in tasks for w in ("diagnos", "abnormal", "disease", "rhythm is", "attack")))
+        t.check("the ECG tasks use a single visual type but several question types and answers",
+                len({x.question_type for x in tasks}) == 5 and len({str(x.answer) for x in tasks}) >= 8)
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
+def _review_sheet_checks(ui: UI, t: _Checker, rt, tmp: Path) -> None:
+    """The human review sheet: every task's picture, question and answer, answer hidden in the HTML."""
+    from generate import review_sheet
+    from generate.generate_tasks import generate_all
+    from generate.generators.ecg_beat_count import EcgBeatCountGenerator
+    from generate.generators.ecg_rate import EcgRateGenerator
+
+    _section(ui, "N. human review sheet")
+    work = Path(tempfile.mkdtemp(prefix="vtf_review_"))
+    try:
+        for dname in ("runner", "generate", "validate", "eval", "tasks", "results"):
+            (work / dname).mkdir()
+        (work / "tasks" / "tasks.jsonl").write_text(json.dumps({"_placeholder": True, "task_id": "PLACEHOLDER"}) + "\n", encoding="utf-8")
+        (work / "results" / "run_config.json").write_text(json.dumps({"models": [], "temperature": 0}), encoding="utf-8")
+        cfg = Config.load(work, work / "results" / "run_config.json", overrides={"seed": 5})
+        t.check("no review sheet is written when there are no tasks", review_sheet.build(work) is None)
+        reg = discover(extra=[EcgBeatCountGenerator, EcgRateGenerator], include_user=False)
+        with contextlib.redirect_stdout(io.StringIO()):
+            tasks, _ = generate_all(cfg, ui, reg, count=4)
+        (work / "results" / "responses.csv").write_text(
+            "task_id,model,extracted_answer,reference_answer,correct,status\n" + f"{tasks[0].id},Model A,999,{tasks[0].answer},false,ok\n"
+            + f"{tasks[1].id},Stale Model,777,{tasks[1].answer}0001,false,ok\n", encoding="utf-8")
+        made = review_sheet.build(work)
+        t.check("tasks/review.html and tasks/REVIEW.md are written next to the tasks", made is not None and all(p.exists() for p in made))
+        page = made[0].read_text(encoding="utf-8")
+        text = made[1].read_text(encoding="utf-8")
+        t.check("every task's id, full question and correct answer are in the sheet",
+                all(x.id in page and x.id in text and x.question in text.replace("\n", " ") for x in tasks) and
+                all(f"Correct answer:** {x.answer}" in text for x in tasks))
+        t.check("every picture the sheet links to exists", all((work / "tasks" / "images" / f"{x.id}.png").exists() and f"images/{x.id}.png" in page for x in tasks))
+        t.check("in the HTML the correct answer sits inside a closed <details> (hidden until clicked)",
+                page.count("<details>") == len(tasks) and all(page.index("Correct answer") > page.index("<details>") for _ in tasks[:1]))
+        t.check("model answers from results/responses.csv appear for the task they belong to",
+                "Model A" in text and "999" in text and "wrong" in text)
+        t.check("replies scored against a different reference answer (a stale run) are not shown", "Stale Model" not in text)
+        t.check("the sheet says these are synthetic tasks, not clinical", "not clinical cases" in page and "not clinical cases" in text)
+    finally:
+        shutil.rmtree(work, ignore_errors=True)

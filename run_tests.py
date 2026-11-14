@@ -141,6 +141,8 @@ def run_selected_stages(ctx: RunContext, stages: list[int]) -> bool:
                 from generate.generate_tasks import generate_all
                 ctx.tasks, _ = generate_all(ctx.cfg, out, ctx.registry, count=ctx.args.count,
                                             only=ctx.args.generator)
+                from generate.generate_tasks import _write_review_sheet
+                _write_review_sheet(ctx.cfg, out)
                 ctx.validation = ctx.records = ctx.rows = ctx.scoring = None  # downstream results are stale
                 result = ctx.stage_result(name)
             else:

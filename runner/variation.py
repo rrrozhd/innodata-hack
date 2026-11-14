@@ -34,7 +34,7 @@ def find_near_duplicates(descriptions: dict[str, dict[str, str]], threshold: flo
     return pairs
 
 
-def analyze(cfg: Config, ui: UI, tasks: list[Task]) -> dict:
+def analyze(cfg: Config, ui: UI, tasks: list[Task], fixed_generators: set[str] | frozenset[str] = frozenset()) -> dict:
     n = len(tasks)
     if not n:
         ui.warn("no tasks to analyze")
@@ -87,13 +87,21 @@ def analyze(cfg: Config, ui: UI, tasks: list[Task]) -> dict:
 
     # Near-identical questions within one question type (templates are similar by nature)
     thr = vcfg.get("near_duplicate_ratio", 0.9) if "near_duplicate_ratio" in vcfg else cfg.get("validation.near_duplicate_ratio", 0.9)
-    near = [(a, b) for a, b, _ in find_near_duplicates({t.id: describe_task(t) for t in tasks}, thr)]
+    near_all = [(a, b) for a, b, _ in find_near_duplicates({t.id: describe_task(t) for t in tasks}, thr)]
+    by_id = {t.id: t for t in tasks}
+    # a generator that declares fixed_question = True asks the identical question ON PURPOSE
+    planned = [(a, b) for a, b in near_all if by_id[a].generator in fixed_generators and by_id[b].generator in fixed_generators]
+    near = [p for p in near_all if p not in planned]
+    if planned:
+        ui.info(f"{len(planned)} task pair(s) ask near-identical questions by design (generator declares "
+                f"fixed_question = True). Variation then rests on the pictures and the answers: the checks "
+                "above (different data, varied answers) still apply.")
     if near:
         ui.warn(f"{len(near)} task pair(s) have near-identical question text (>= {thr:.0%} similar), e.g. "
                 + ", ".join(f"{a}/{b}" for a, b in near[:3]))
         ui.detail("Same-template questions are fine if the picture differs a lot, but vary the wording, the "
                   "thing being asked, or the layout so the set is meaningfully varied.")
-    else:
+    elif not planned:
         ui.pass_("no near-identical question texts")
 
     answers = Counter(str(t.answer) for t in tasks)
@@ -114,5 +122,6 @@ def run(ctx: RunContext) -> StageResult:
     tasks = ctx.selected_tasks()
     if not tasks:
         raise StageAbort("no tasks loaded; run the generators first (python -m generate.generate_tasks)")
-    ctx.variation = analyze(ctx.cfg, ctx.out, tasks)
+    fixed = frozenset(n for n, g in ctx.registry.generators.items() if g.fixed_question)
+    ctx.variation = analyze(ctx.cfg, ctx.out, tasks, fixed)
     return ctx.stage_result(NAME)

@@ -137,7 +137,14 @@ def write_summary_files(cfg: Config, summary: dict, tasks: list[Task], model_lab
         info = summary["tasks"][t.id]
         lines.append(f"| {t.id} | " + " | ".join(info["cells"][l] for l in model_labels) + f" | {info['verdict']} |")
     (cfg.results_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    return ["results/summary.json", "results/summary.md"]
+    written = ["results/summary.json", "results/summary.md"]
+    try:  # refresh the human review sheet so it shows what each model answered
+        from generate import review_sheet
+        if review_sheet.build(cfg.root):
+            written += ["tasks/review.html", "tasks/REVIEW.md"]
+    except Exception:  # noqa: BLE001  never let the review sheet break scoring
+        pass
+    return written
 
 
 def build_report(responses_path=None, out_path=None) -> None:
