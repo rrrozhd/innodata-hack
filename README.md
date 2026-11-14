@@ -146,6 +146,10 @@ A record with `"_placeholder": true` is skipped everywhere and never scored. Run
 
 `python run_tests.py --package` scans every file that would be packaged for API keys (and refuses if it finds one), requires every task to be hand-checked (`--allow-unchecked` overrides, with a warning), and writes `dist/<Team>_Track<N>.zip` without `.env`, caches, `.git`, virtualenvs, or old zips. The zip's internal layout and the track number are provisional until confirmed with the organizers.
 
+## Adding tasks
+
+Teammates: see [docs/ADDING_TESTS.md](docs/ADDING_TESTS.md) for how to write a generator, check it, and hand-check its tasks.
+
 ## Pilot results
 
 <!-- PILOT_RESULTS_PLACEHOLDER -->
