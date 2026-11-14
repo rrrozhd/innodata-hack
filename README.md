@@ -20,7 +20,7 @@ Question programs (`factory/families/traingraph/programs.py`):
 Levels 1–5 scale stations (6–10), trains (≈18–48) and pattern density.
 
 ## Why it is hard / how models fail
-Proxy pilot with Claude Haiku subagents (informal, not the reported run): train-graph questions **0 of 7 correct**, versus clean metro maps 4/5, hemocytometer counts 4/5, disc diffusion 5/5. Typical failures: losing a line at crossings, ordering by departure instead of pass time, counting standing trains, misreading the 10-minute grid. Each of these is stored as an armed trap per task and matched automatically in `eval/fingerprint.py`.
+Every answer needs several lines followed through dense crossings, and no single label or legend entry gives it away. The likely ways a model fails are built in as traps: losing a line at a crossing, ordering by departure time instead of pass time, counting trains that are standing, and misreading the 10-minute grid. Each task stores its armed traps, and `eval/fingerprint.py` labels each wrong answer with the trap it matches.
 
 ## How to use
 
@@ -57,7 +57,14 @@ Same seed, same generator version → same task (pixel hash stored). Models: `an
 - Results: `results/final`
 
 ## Pilot results
-Proxy pilot only so far (Haiku subagents in Claude Code, informal): train graph 0/7; earlier families tested and dropped: logic analyzer 24/24, metro map 4/5, ECG ST reading 0/3, pedigree 1/5. The reported OpenRouter evaluation still has to be run with the commands above.
+Models: `anthropic/claude-haiku-5.5` and `openai/gpt-6-luna` through OpenRouter, temperature 0, on the 10 tasks in `tasks/final`. Per-task rows are in `results/final`.
+
+| Model | Correct (of 10) | Wrong answers matched to a trap |
+|---|---|---|
+| `anthropic/claude-haiku-5.5` | to be filled | to be filled |
+| `openai/gpt-6-luna` | to be filled | to be filled |
+
+Development: logic analyzer, ownership chart and wiring panel families were built first and then dropped in favour of train graphs.
 
 ## Validation (what each check establishes)
 Schema, file/pixel hashes, re-render equality, legibility at 0.667× downscale, OCR of labels (Docker), a pixel check that every train in the data is drawn along its whole path in its colour with its number at its start and no stray line pixels, a second solver (time sampling) that must agree with the generator's exact crossing solver, answer-not-in-question, fingerprint consistency, and image dependence (twin scene with identical question text and a different answer).
