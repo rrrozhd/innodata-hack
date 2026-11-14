@@ -26,19 +26,27 @@ def load_tasks(path: Path = TASKS_PATH) -> list[dict[str, Any]]:
 
 
 def run_checks(task: dict[str, Any]) -> dict[str, Any]:
-    """Run all validity checks on one task and return the results.
+    """Run all validity checks on one task, in pipeline order, and return the results.
 
     TODO: decide the result schema and how failures are reported.
     """
-    raise NotImplementedError("TODO: run checks for one task")
+    reference = compute_reference_answer(task)
+    render_ok = check_render(task, Path(task["image_path"]))
+    needs_image_ok = needs_image(task)
+    return {
+        "reference_answer": reference,
+        "render": render_ok,
+        "needs_image": needs_image_ok,
+    }
 
 
 def main() -> None:
-    """Validate every task and print a summary.
+    """Validate every task and print the results.
 
-    TODO: implement the summary output.
+    TODO: replace the raw print with a summary once the result schema is set.
     """
-    raise NotImplementedError("TODO: validate all tasks")
+    for task in load_tasks():
+        print(task.get("task_id"), run_checks(task))
 
 
 if __name__ == "__main__":
